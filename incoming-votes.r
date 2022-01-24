@@ -17,11 +17,21 @@ comp_range <- year_range[seq_len(year_range_length) - 1]
 
 sub_text <- paste0(first(comp_range), "-", last(comp_range))
 
+max_this_year <-
+    votes %>%
+    filter(year == year_now) %>%
+    slice_max(votesreceived)
+
+max_x <- max_this_year %>% pull(daysuntilelection)
+max_y <- max_this_year %>% pull(votesreceived)
+segment_color <- ifelse(max_y < 120, "red", "darkgreen")
+
 color_range <- c(rep("gray50", year_range_length - 1), "red")
 line_type_range <- c(rep("dotted", year_range_length - 1), "solid")
 line_size_range <- c(rep(0.5, year_range_length - 1), 1.5)
 
-votes %>%
+votesplot <-
+    votes %>%
     mutate(count = case_when(year == year_now ~ votesreceived
                              )
             ) %>%
@@ -33,6 +43,13 @@ votes %>%
         linetype = year,
         size = year) +
     geom_line() +
+    geom_segment(aes(x = max_x,
+                     y = max_y,
+                     xend = max_x,
+                     yend = 120),
+                 color = segment_color,
+                 lty = 3,
+                 size = 1) +
     geom_point(data = votes %>% filter(year == year_now),
                aes(label = NA),
                color = "red",
@@ -73,5 +90,14 @@ votes %>%
     theme_light() +
     theme(legend.position = "none", 
           plot.subtitle = element_markdown())
+
+if (max_y < 120){
+    y_pos <- mean(c(120, max_y))
+    votes_to_go <- 120 - max_y
+    votesplot +
+    annotate("label", x = max_x, y = y_pos, label = paste0("At least ", votes_to_go, " more\nvotes needed"), color = "red")
+} else {
+    votesplot}
+
 
 ggsave("trends/vote-count-comparison.png", width = 6, height = 6)
