@@ -6,41 +6,20 @@ library(ggtext)
 # library(broom)
 
 #define constants
-YMAX_DEFAULT <- 160
+source("00-defaults.r")
+source("01-import.r")
+load("Rdata/votes.Rdata")
 
-#read neighborhood defaults
-config <- read_csv("config/config.csv") %>%
-              mutate(year = factor(year),
-                     quorum = numberhomes %/% 4)
-
-# read data file
-votes <-
-    list.files(path = "sources/", pattern = "*.csv", full.names = TRUE) %>%
-    map_df(~read_csv(.)) %>%
-                    mutate(date = as.Date(date, format = "%Y-%m-%d"),
-                           year = factor(year(date))) %>%
-                     inner_join(config) %>%
-                     mutate(votesneeded = quorum - votesreceived,
-                            daysuntilelection = meetingdate - date,
-                            pastquorum = ifelse(votesreceived >= quorum,
-                                                TRUE, 
-                                                FALSE)
-                            )
-
-year_range <-
-    votes %>%
-    distinct(year) %>%
-    pull(year)
-
+year_range <- eggstract(votes, year)
+year_range_length <- length(year_range)
 year_now <- last(year_range)
-# comp_range2 <- year_range[1:length(year_range) - 1]
-comp_range <- year_range[seq_len(length(year_range) - 1)]
+comp_range <- year_range[seq_len(year_range_length) - 1]
 
 sub_text <- paste0(first(comp_range), "-", last(comp_range))
 
-color_range <- c(rep("gray50", length(year_range) - 1), "red")
-line_type_range <- c(rep("dotted", length(year_range) - 1), "solid")
-line_size_range <- c(rep(0.5, length(year_range) - 1), 1.5)
+color_range <- c(rep("gray50", year_range_length - 1), "red")
+line_type_range <- c(rep("dotted", year_range_length - 1), "solid")
+line_size_range <- c(rep(0.5, year_range_length - 1), 1.5)
 
 votes %>%
     mutate(count = case_when(year == year_now ~ votesreceived

@@ -5,35 +5,17 @@ library(ggrepel)
 library(broom)
 library(ggtext)
 library(patchwork)
-options(bitmapType = "cairo")
 theme_set(theme_light())
 
 #read neighborhood defaults
-config <- read_csv("config/config.csv") %>%
-              mutate(year = factor(year),
-                     quorum = numberhomes %/% 4)
-
-find_value <- function(x, y, target = 0) {
-    approx(y, x, xout = target)$y
-}
+source("00-defaults.r")
+source("01-import.r")
+load("Rdata/votes.Rdata")
 
 # select all years to not be included in the baseline range
 analysis_years <- c(2023)
 
 # read data file
-votes <-
-    list.files(path = "sources/", pattern = "*.csv", full.names = TRUE) %>%
-    map_df(~read_csv(.)) %>%
-                    mutate(date = as.Date(date, format = "%Y-%m-%d"),
-                           year = factor(year(date))) %>%
-                     inner_join(config) %>%
-                     mutate(votesneeded = quorum - votesreceived,
-                            daysuntilelection = as.numeric(meetingdate - date),
-                            pastquorum = ifelse(votesreceived >= quorum,
-                                                TRUE,
-                                                FALSE)
-                            )
-
 full_data_set <- votes
 
 votes <- votes %>% filter(!year %in% analysis_years)
