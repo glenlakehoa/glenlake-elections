@@ -91,11 +91,16 @@ votesplot <-
     theme(legend.position = "none", 
           plot.subtitle = element_markdown())
 
-if (max_y < 120){
+if (max_y < 120) {
     y_pos <- mean(c(120, max_y))
     votes_to_go <- 120 - max_y
     votesplot +
-    annotate("label", x = max_x, y = y_pos, label = paste0("At least ", votes_to_go, " more\nvotes needed"), color = "red")
+    annotate("label",
+             alpha = .6,
+             x = max_x + 1.5,
+             y = y_pos,
+             label = paste0("At least ", votes_to_go, " more\nvotes needed"),
+             color = "red")
 } else {
     votesplot}
 
