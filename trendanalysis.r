@@ -13,7 +13,7 @@ source("01-import.r")
 load("Rdata/votes.Rdata")
 
 # select all years to not be included in the baseline range
-analysis_years <- c(2023)
+analysis_years <- c(2022)
 
 # read data file
 full_data_set <- votes
@@ -37,8 +37,8 @@ lin_estimates <- votesmodel %>% tidy() %>% pull(estimate)
 
 slope <- round(lin_estimates[2], 1)
 
-min_day <- with(votesdata, find_value(daysuntilelection, .upper, 0))
-max_day <- with(votesdata, find_value(daysuntilelection, .lower, 0))
+min_day <- with(votesdata, find_zero_value(daysuntilelection, .upper))
+max_day <- with(votesdata, find_zero_value(daysuntilelection, .lower))
 zero_days <- c(min_day, max_day)
 subtitle <- paste0("Quorum expected between ",
                   round(min_day, 0),
@@ -91,15 +91,15 @@ votesforecast_thisyear <- votesforecast +
                     lty = 2,
                     fullrange = TRUE)
 
-ggsave("trends/quorum-forecast_thisyear.png",
-       plot = votesforecast_thisyear,
-       width = 11,
-       height = 8)
+# ggsave("trends/quorum-forecast_thisyear.png",
+#        plot = votesforecast_thisyear,
+#        width = 11,
+#        height = 8)
 
-ggsave("trends/quorum-forecast.png",
-       plot = votesforecast,
-       width = 6,
-       height = 6)
+# ggsave("trends/quorum-forecast.png",
+#        plot = votesforecast,
+#        width = 6,
+#        height = 6)
 
 #########################################
 
@@ -192,14 +192,13 @@ votingrate <- votes_per_day_by_year %>%
                  label.size = NA,
                  label = "Minimum required days of election season")
 
-ggsave("trends/intake-votes-per-day.png",
-       plot = votingrate,
-       width = 6,
-       height = 6)
+# ggsave("trends/intake-votes-per-day.png",
+#        plot = votingrate,
+#        width = 6,
+#        height = 6)
 
-(votesforecast / votingrate)
-ggsave("trends/voteforecasts_combined.pdf", width = 8, height = 11)
-ggsave("trends/voteforecasts_combined.png", width = 6, height = 10)
+(votesforecast_thisyear + votingrate)
+ggsave("trends/voteforecasts_combined.png", width = 12, height = 6)
 
 #######################################################
 
@@ -257,7 +256,7 @@ votingrate <- votes_per_day_by_year %>%
              title = "Incoming votes per day over the last election years",
              subtitle = "Vote intake has been dropping every year",
              caption = "Actual data in green;\nModels and predictions in red") +
-        geom_errorbar(aes(ymax = slope_max, ymin = slope_min), width=.2) +
+        geom_errorbar(aes(ymax = slope_max, ymin = slope_min), width = .2) +
         geom_line(data = fit_line,
                   aes(y = .fitted, group = TRUE),
                   color = "red",
