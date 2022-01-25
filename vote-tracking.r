@@ -59,7 +59,7 @@ for (y in year_range) {
                theme(legend.position = "none")
 
      fname <- paste0("graphs/vote-tracking-", y, ".png")
-     ggsave(fname)
+     ggsave(fname, height = 6, width = 6)
 
      model <- lm(voting$votesreceived ~ voting$daysuntilelection)
      slope <- abs(coefficients(model)[2])
