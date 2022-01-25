@@ -3,7 +3,6 @@ library(tidyverse)
 library(lubridate)
 library(ggrepel)
 library(ggtext)
-# library(broom)
 
 #define constants
 source("00-defaults.r")
@@ -88,7 +87,7 @@ votesplot <-
              color = "black"
              ) +
     theme_light() +
-    theme(legend.position = "none", 
+    theme(legend.position = "none",
           plot.subtitle = element_markdown())
 
 if (max_y < 120) {
@@ -102,7 +101,8 @@ if (max_y < 120) {
              label = paste0("At least ", votes_to_go, " more\nvotes needed"),
              color = "red")
 } else {
-    votesplot}
+    votesplot
+    }
 
 
 ggsave("trends/vote-count-comparison.png", width = 6, height = 6)

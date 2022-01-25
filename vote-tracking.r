@@ -87,9 +87,6 @@ for (y in year_range) {
                geom_vline(xintercept = 0, lty = 1, color = "red") +
                theme_light()
 
-     # fname <- paste0("test/vote-expectation-", y, ".png")
-     # ggsave(fname)
-
      predictrange <- tibble(date  = seq.Date(from = min(voting$date),
                                                  to = MEETINGDATE + days(7),
                                                  by = "1 day"))
@@ -107,7 +104,7 @@ for (y in year_range) {
      targetdate <- find_value(predictedvotes$date, predictedvotes$.fitted, target = 120)
 
      plot2 <-
-          voting %>% 
+          voting %>%
           ggplot +
           aes(x = date, y = votesreceived) +
           #geom_smooth(method = "lm", lty = 2, color = "gray") +
