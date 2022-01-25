@@ -220,7 +220,7 @@ votes_per_day_by_year <- votes %>%
 days60 <- 120 / 60
 forecast_years <- 2
 config$year <- as.numeric(paste(config$year))
-
+max_year = year(today())
 fit_line <- lm(data = votes_per_day_by_year,
                averagevotesperday ~ as.numeric(paste(year))
                )  %>%
