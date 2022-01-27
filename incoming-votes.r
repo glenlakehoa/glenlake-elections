@@ -23,6 +23,8 @@ max_this_year <-
 
 max_x <- max_this_year %>% pull(daysuntilelection)
 max_y <- max_this_year %>% pull(votesreceived)
+max_meeting_date <- max_this_year %>% pull(meetingdate) %>% format(., format = "%b %d, %Y")
+
 segment_color <- ifelse(max_y < 120, "red", "darkgreen")
 
 color_range <- c(rep("gray50", year_range_length - 1), "red")
@@ -80,7 +82,7 @@ votesplot <-
              hjust = 0) +
     geom_richtext(x = 0,
              y = 10,
-             label = "Annual Meeting",
+             label = paste("Annual Meeting ", max_meeting_date),
              hjust = 0,
              angle = 90,
              size = 3,
