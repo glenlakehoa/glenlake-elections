@@ -94,7 +94,7 @@ for (y in year_range) {
 
      predictedvotes <- voting %>%
               lm(votesreceived ~ date, data = .) %>%
-              augment(newdata = predictrange)
+              augment(newdata = predictrange, interval = "confidence")
 
      expectedvotes <- predictedvotes %>%
                     filter(date == MEETINGDATE) %>%
@@ -110,6 +110,8 @@ for (y in year_range) {
           #geom_smooth(method = "lm", lty = 2, color = "gray") +
           geom_point() +
           #      geom_line(lty = 2, color = "black") +
+          geom_line(data = predictedvotes, aes(y = .lower), lty = 1, color = "gray80") + 
+          geom_line(data = predictedvotes, aes(y = .upper), lty = 1, color = "gray80") + 
           scale_x_date(date_breaks = "1 week", date_labels = "%b %d", limit = XLIMITS) +
           scale_y_continuous(limit = YLIMITS, breaks = YLABELS,
                          sec.axis = sec_axis(~ . / QUORUM * 100, breaks = PERCENTBREAKS, name = "Quorum (%)")
