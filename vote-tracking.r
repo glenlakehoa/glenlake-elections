@@ -127,7 +127,7 @@ for (y in year_range) {
           theme(legend.position = "none") +
           geom_line(data = predictedvotes, aes(y = .fitted, label = NULL), color = "gray50", lty = 1)
 
-       joint_plot <- plot1 + plot2
+       joint_plot <- plot2 #plot1 + plot2
        fname <- paste0("graphs/vote-expectation-", y, ".png")
-       ggsave(fname, plot = joint_plot, width = 12, height = 6)
+       ggsave(fname, plot = joint_plot, width = 6, height = 6)
 }

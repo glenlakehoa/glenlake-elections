@@ -13,7 +13,7 @@ source("01-import.r")
 load("Rdata/votes.Rdata")
 
 # select all years to not be included in the baseline range
-analysis_years <- c(2022)
+analysis_years <- c(2023)
 
 # read data file
 full_data_set <- votes
