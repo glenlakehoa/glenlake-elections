@@ -10,7 +10,7 @@ config <- read_csv("config/config.csv") %>%
 # read data file
 votes <-
     list.files(path = "sources/", pattern = "*.csv", full.names = TRUE) %>%
-    map_df(~read_csv(.)) %>%
+    map_df(~read_csv(., comment = "#")) %>%
     mutate(date = as.Date(date, format = "%Y-%m-%d"),
             year = factor(year(date))) %>%
     inner_join(config) %>%
