@@ -1,5 +1,5 @@
 *.pdf
 *.png
 *.jpg
-!graphs/vote-tracking-2022.png
+!graphs/vote-tracking-2023.png
 *.Rdata
