@@ -34,9 +34,11 @@ track_data_by_year <- function(vote_data, yr) {
         )
     )
 
-    caption <- glue::glue("\U00A9 Glenlake Upstate Homeowners ",
-                        "Association, Inc. Updated ",
-                        format(lubridate::today(), format = "%b %d, %Y"))
+    caption <- glue::glue(
+        "\U00A9 Glenlake Upstate Homeowners ",
+        "Association, Inc. Updated ",
+        format(lubridate::today(), format = "%b %d, %Y")
+    )
 
     vote %>%
         ggplot() +
@@ -80,7 +82,7 @@ track_data_by_year <- function(vote_data, yr) {
                 name = "Relative to quorum",
                 labels = scales::percent_format(accuracy = 1)
             )
-        ) + 
+        ) +
         theme(
             plot.caption.position = "plot",
             plot.caption = element_text(hjust = 0, size = 6),
@@ -88,7 +90,7 @@ track_data_by_year <- function(vote_data, yr) {
         )
 
     ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4)
-    if(yr == max_year) ggsave(glue::glue("graphs/vote-tracking.png"), width = 6, height = 4)
+    if (yr == max_year) ggsave("graphs/vote-tracking.png", width = 6, height = 4) # nolint
 }
 
 map(year_range, ~ track_data_by_year(votes, .x))
