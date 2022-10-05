@@ -4,8 +4,6 @@ theme_set(theme_light())
 
 load("Rdata/votes.Rdata")
 
-votes
-
 year_range <- unique(votes$year)
 
 track_data_by_year <- function(vote_data, yr) {
@@ -14,6 +12,7 @@ track_data_by_year <- function(vote_data, yr) {
     meeting_quorum <- unique(vote$quorum)
     meeting_date <- unique(vote$meetingdate)
     vote_max <- max(vote$votesreceived)
+    max_year <- max(vote_data$year)
 
     y_max <- ifelse(vote_max < 160,
         160,
@@ -79,6 +78,7 @@ track_data_by_year <- function(vote_data, yr) {
         )
 
     ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4)
+    if(yr == max_year) ggsave(glue::glue("graphs/vote-tracking.png"), width = 6, height = 4)
 }
 
 map(year_range, ~ track_data_by_year(votes, .x))
