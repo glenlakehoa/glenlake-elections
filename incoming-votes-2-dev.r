@@ -88,25 +88,21 @@ modeled_votes %>%
 modeled_votes %>%
     ungroup() %>%
     unnest(params) %>%
-    mutate(term = case_when(
-        term == "(Intercept)" ~ "intercept",
-        term == "daysuntilelection" ~ "daysuntilelection"
-    )) %>%
     select(year, term, estimate) %>%
+    pivot_wider(names_from = "term", values_from = "estimate") %>%
     mutate(
-        expected_votes = ifelse(term == "intercept", 120 - estimate, NA_real_),
-        votes_per_day = ifelse(term == "daysuntilelection", estimate, NA_real_)
+        expected_votes = floor(120 - `(Intercept)`),
+        votes_per_day = daysuntilelection
     ) %>%
-    select(year, expected_votes, votes_per_day) %>%
-    pivot_longer(-year) %>%
-    drop_na() %>%
-    knitr::kable()
-
+    select(-c(2,3))
 
 modeled_votes %>%
-    ungroup() %>%
-    unnest(modeldata) %>%
-    ggplot() + aes(daysuntilelection, .fitted, color = year) +
-    geom_line(show.legend = FALSE) +
-    scale_x_reverse() +
-    geom_hline(yintercept = 0)
+    filter(year != "2023") %>%
+    mutate(zerovalue = map_dbl(
+        modeldata,
+        ~ approx(.x$.fitted,
+            .x$daysuntilelection,
+            0,
+            na.rm = TRUE
+        )$y
+    ))
