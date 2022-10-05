@@ -19,7 +19,7 @@ track_data_by_year <- function(vote_data, yr) {
         20 * (vote_max %/% 20 + 1)
     )
 
-    date_labels <- meeting_date - -1:4 * weeks(1)
+    date_labels <- meeting_date - 0:4 * weeks(1)
 
     votes_required <- ifelse(vote_max >= meeting_quorum,
         NA_real_,
@@ -33,6 +33,10 @@ track_data_by_year <- function(vote_data, yr) {
             format(meeting_date, format = "%B %d"), " to reach quorum"
         )
     )
+
+    caption <- glue::glue("\U00A9 Glenlake Upstate Homeowners ",
+                        "Association, Inc. Updated ",
+                        format(lubridate::today(), format = "%b %d, %Y"))
 
     vote %>%
         ggplot() +
@@ -60,10 +64,11 @@ track_data_by_year <- function(vote_data, yr) {
             x = "Date",
             y = "Votes received",
             title = glue::glue("Glen Lake elections {yr}"),
-            subtitle = subtitle
+            subtitle = subtitle,
+            caption = caption
         ) +
         scale_x_date(
-            limits = c(min(date_labels), max(date_labels)),
+            limits = c(min(date_labels), max(date_labels) + days(2)),
             breaks = date_labels,
             date_label = "%b %d"
         ) +
@@ -75,6 +80,11 @@ track_data_by_year <- function(vote_data, yr) {
                 name = "Relative to quorum",
                 labels = scales::percent_format(accuracy = 1)
             )
+        ) + 
+        theme(
+            plot.caption.position = "plot",
+            plot.caption = element_text(hjust = 0, size = 6),
+            plot.title.position = "plot"
         )
 
     ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4)
