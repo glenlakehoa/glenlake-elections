@@ -1,5 +1,6 @@
 library(tidyverse)
 library(lubridate)
+library(patchwork)
 theme_set(theme_light())
 
 load("Rdata/votes.Rdata")
@@ -45,13 +46,13 @@ track_data_by_year <- function(vote_data, yr) {
         aes(date, votesreceived) +
         geom_hline(
             yintercept = meeting_quorum,
-            color = "gray70",
+            color = "#D3BDA8",
             size = 1
         ) +
         geom_vline(
             xintercept = meeting_date,
             lty = 1,
-            color = "gray70", size = 1
+            color = "#D3BDA8", size = 1
         ) +
         annotate("text",
             x = meeting_date + days(1),
@@ -60,8 +61,8 @@ track_data_by_year <- function(vote_data, yr) {
             hjust = "left",
             angle = 90
         ) +
-        geom_point(size = 2) +
-        geom_line(lty = 3) +
+        geom_point(size = 2, color = "#295043") +
+        geom_line(lty = 1, color = "#295043") +
         labs(
             x = "Date",
             y = "Votes received",
@@ -75,7 +76,7 @@ track_data_by_year <- function(vote_data, yr) {
             date_label = "%b %d"
         ) +
         scale_y_continuous(
-            breaks = seq(0, 484, 20),
+            breaks = seq(0, 484, 40),
             limits = c(0, y_max),
             sec.axis = sec_axis(~ . / meeting_quorum,
                 breaks = seq(0, 5, .25),
@@ -86,11 +87,21 @@ track_data_by_year <- function(vote_data, yr) {
         theme(
             plot.caption.position = "plot",
             plot.caption = element_text(hjust = 0, size = 6),
-            plot.title.position = "plot"
-        )
+            plot.title.position = "plot",
+            panel.grid.minor =  element_blank()
+        ) +
+        inset_element(p = logoimage,
+                      align_to = "full",
+                      on_top = FALSE,
+                        left = 0.85,
+                        bottom = 0.85,
+                        right = 1,
+                        top = 1)
 
     ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4)
     if (yr == max_year) ggsave("graphs/vote-tracking.png", width = 6, height = 4) # nolint
 }
+
+logoimage <- jpeg::readJPEG("images/glenlakelogo.jpg", native = TRUE)
 
 map(year_range, ~ track_data_by_year(votes, .x))
