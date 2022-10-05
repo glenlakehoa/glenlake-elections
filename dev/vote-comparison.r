@@ -1,5 +1,6 @@
 library(tidyverse)
 library(lubridate)
+theme_set(theme_light())
 
 load("Rdata/votes.Rdata")
 
@@ -9,7 +10,7 @@ year_length <- length(year_range)
 colors <- c(rep("gray70", year_length - 1), "gray30")
 alphas <- c(rep(.2, year_length - 1), .8)
 
-max_year = max(year_range)
+max_year <- max(year_range)
 
 votes %>%
     ggplot() +

@@ -29,14 +29,25 @@ track_data_by_year <- function(vote_data, yr) {
 
     subtitle <- ifelse(is.na(votes_required),
         glue::glue("Quorum has been reached with {vote_max} votes"),
-        glue::glue("{votes_required} votes are still needed before ", format(meeting_date, format = "%B %d"), " to reach quorum")
+        glue::glue(
+            "{votes_required} votes are still needed before ",
+            format(meeting_date, format = "%B %d"), " to reach quorum"
+        )
     )
 
     vote %>%
         ggplot() +
         aes(date, votesreceived) +
-        geom_hline(yintercept = meeting_quorum, color = "gray70", size = 1) +
-        geom_vline(xintercept = meeting_date, lty = 1, color = "gray70", size = 1) +
+        geom_hline(
+            yintercept = meeting_quorum,
+            color = "gray70",
+            size = 1
+        ) +
+        geom_vline(
+            xintercept = meeting_date,
+            lty = 1,
+            color = "gray70", size = 1
+        ) +
         annotate("text",
             x = meeting_date + days(1),
             y = 10,
@@ -67,7 +78,7 @@ track_data_by_year <- function(vote_data, yr) {
             )
         )
 
-    ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 5)
+    ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4)
 }
 
 map(year_range, ~ track_data_by_year(votes, .x))
