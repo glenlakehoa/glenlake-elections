@@ -15,19 +15,19 @@ track_data_by_year <- function(vote_data, yr) {
     vote_max <- max(vote$votesreceived)
     max_year <- max(vote_data$year)
 
-    y_max <- ifelse(vote_max < 160,
+    y_max <- if_else(vote_max < 160,
         160,
         20 * (vote_max %/% 20 + 1)
     )
 
-    date_labels <- meeting_date - 0:4 * weeks(1)
+    date_labels <- meeting_date - 0:4 * lubridate::weeks(1)
 
-    votes_required <- ifelse(vote_max >= meeting_quorum,
+    votes_required <- if_else(vote_max >= meeting_quorum,
         NA_real_,
         meeting_quorum - vote_max
     )
 
-    subtitle <- ifelse(is.na(votes_required),
+    subtitle <- if_else(is.na(votes_required),
         glue::glue("Quorum has been reached with {vote_max} votes"),
         glue::glue(
             "{votes_required} votes are still needed before ",
@@ -88,18 +88,20 @@ track_data_by_year <- function(vote_data, yr) {
             plot.caption.position = "plot",
             plot.caption = element_text(hjust = 0, size = 6),
             plot.title.position = "plot",
-            panel.grid.minor =  element_blank()
+            panel.grid.minor = element_blank()
         ) +
-        inset_element(p = logoimage,
-                      align_to = "full",
-                      on_top = FALSE,
-                        left = 0.85,
-                        bottom = 0.85,
-                        right = 1,
-                        top = 1)
+        inset_element(
+            p = logoimage,
+            align_to = "full",
+            on_top = FALSE,
+            left = 0.85,
+            bottom = 0.85,
+            right = 1,
+            top = 1
+        )
 
-    ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4)
-    if (yr == max_year) ggsave("graphs/vote-tracking.png", width = 6, height = 4) # nolint
+    ggplot2::ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4) # nolint
+    if (yr == max_year) ggplot2::ggsave("graphs/vote-tracking.png", width = 6, height = 4) # nolint
 }
 
 logoimage <- jpeg::readJPEG("images/glenlakelogo.jpg", native = TRUE)
