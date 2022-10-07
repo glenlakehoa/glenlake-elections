@@ -20,7 +20,7 @@ track_data_by_year <- function(vote_data, yr) {
         20 * (vote_max %/% 20 + 1)
     )
 
-    date_labels <- meeting_date - 0:4 * lubridate::weeks(1)
+    date_labels <- meeting_date - 0:5 * lubridate::weeks(1)
 
     votes_required <- if_else(vote_max >= meeting_quorum,
         NA_real_,
