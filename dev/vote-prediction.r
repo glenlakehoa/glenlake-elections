@@ -63,10 +63,17 @@ votemodeldata <-
     ) %>%
     janitor::clean_names()
 
+max_votes <-
+    votes %>%
+    group_by(year) %>%
+    summarise(votes = max(votesreceived), .groups = "drop")
+
+
 (votemodeldata %>%
     ggplot() +
     aes(year, estimate_intercept) +
     geom_point() +
+    geom_point(data = max_votes, aes(y = votes), shape = 10, size = 4) + 
     geom_errorbar(aes(ymin = lower_intercept, ymax = upper_intercept)) +
     geom_hline(yintercept = 120, color = "red") +
     labs(x = "Year", y = "Estimated votes")) +
