@@ -4,7 +4,7 @@ library(jsonlite)
 
 source_files <- list.files("sources/", pattern = "*.json", full.names = TRUE)
 
-votes_json <-
+votes <-
     map_dfr(source_files, 
             ~jsonlite::read_json(.x, simplifyDataFrame = FALSE)) %>% 
     mutate(date = sapply(votes, function(x) x[[1]]),
@@ -20,5 +20,5 @@ votes_json <-
     ) %>%
     arrange(date)
 
-save(votes_json, file = "Rdata/votes_json.Rdata")
+save(votes, file = "Rdata/votes.Rdata")
 
