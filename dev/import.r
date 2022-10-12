@@ -1,20 +1,24 @@
 library(tidyverse)
-library(lubridate)
+library(jsonlite)
 
-electorate_data <- read_csv("config/config.csv")
 
-source_files <- list.files("sources/", pattern = "*.csv", full.names = TRUE)
+source_files <- list.files("sources/", pattern = "*.json", full.names = TRUE)
 
-votes <-
-    map_dfr(source_files, read_csv) %>%
-    mutate(year = year(date)) %>%
-    inner_join(electorate_data, by = "year") %>%
+votes_json <-
+    map_dfr(source_files, 
+            ~jsonlite::read_json(.x, simplifyDataFrame = FALSE)) %>% 
+    mutate(date = sapply(votes, function(x) x[[1]]),
+           votesreceived = sapply(votes, function(x) x[[2]]),
+           votes = NULL
+            ) %>%
     mutate(
-        quorum = numberhomes %/% 4,
-        daysuntilelection = (meetingdate - date) / ddays(1),
+        across(ends_with("date"), lubridate::ymd),
+        quorum = numberofhomes %/% 4,
+        daysuntilelection = (meetingdate - date) / lubridate::ddays(1),
         voteneeded = quorum - votesreceived,
         past_quorum = votesreceived >= quorum
     ) %>%
     arrange(date)
 
-save(votes, file = "Rdata/votes.Rdata")
+save(votes_json, file = "Rdata/votes_json.Rdata")
+

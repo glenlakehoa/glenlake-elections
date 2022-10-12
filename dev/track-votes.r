@@ -3,7 +3,9 @@ library(lubridate)
 library(patchwork)
 theme_set(theme_light())
 
-load("Rdata/votes.Rdata")
+load("Rdata/votes_json.Rdata")
+
+votes <- votes_json
 
 year_range <- unique(votes$year)
 
