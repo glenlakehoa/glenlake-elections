@@ -131,3 +131,40 @@ quorum_model <- votemodeldata %>%
 )
 
 ggsave("graphs/vote-diagnostics.png", width = 8, height = 8)
+
+boundingbox <- tibble(x = c(200, 120, 120, 200), y = c(10, 10, 4, 4))
+
+votemodeldata %>%
+    mutate(
+        mxyear = max(year),
+        currentyear = year == mxyear
+    ) %>%
+    ggplot() +
+    aes(
+        x = estimate_intercept,
+        y = estimate_daysuntilelection,
+        color = currentyear
+    ) +
+    geom_point(shape = 10, size = 4, show.legend = FALSE) +
+    geom_errorbar(show.legend = FALSE,
+        aes(ymin = lower_daysuntilelection, ymax = upper_daysuntilelection)
+    ) +
+    geom_errorbar(show.legend = FALSE,
+        aes(xmin = lower_intercept, xmax = upper_intercept, )
+    ) +
+    geom_label(aes(label = year), size = 2, show.legend = FALSE) +
+    expand_limits(y = 0) +
+    scale_color_manual(values = c("TRUE" = "#295043", "FALSE" = "#D3BDA8")) +
+    scale_x_reverse(limits = c(200, 0)) +
+    scale_y_reverse(limits = c(10, 0)) +
+    geom_polygon(
+        data = boundingbox,
+        inherit.aes = FALSE,
+        aes(x, y),
+        fill = NA,
+        lty = 2,
+        color = "#295043"
+    ) +
+    labs(x = "Estimated votes", y = "Voting rate")
+
+ggsave("graphs/vote-targets.png", width = 7, height = 6)
