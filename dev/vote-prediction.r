@@ -127,7 +127,7 @@ quorum_model <- votemodeldata %>%
     labs(x = "Year", y = "Quorum reached (in days before election)")
 ) + plot_annotation(
   title = "Incoming vote analysis",
-  subtitle = "Target minimums in red; predications in error bars; Actual data \U2295"
+  subtitle = "Target minimums in red; predictions in error bars; Actual data \U2295"
 )
 
 ggsave("graphs/vote-diagnostics.png", width = 8, height = 8)
