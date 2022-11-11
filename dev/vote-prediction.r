@@ -125,6 +125,9 @@ quorum_model <- votemodeldata %>%
     scale_y_continuous(limits = c(0, NA)) +
     geom_hline(yintercept = 0, color = "red") +
     labs(x = "Year", y = "Quorum reached (in days before election)")
+) + plot_annotation(
+  title = "Incoming vote analysis",
+  subtitle = "Target minimums in red; predications in error bars; Actual data \U2295"
 )
 
 ggsave("graphs/vote-diagnostics.png", width = 8, height = 8)
