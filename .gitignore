@@ -4,3 +4,4 @@
 !graphs/vote-tracking.png
 !images/glenlakelogo.jpg
 *.Rdata
+*.json-tmp
