@@ -2,7 +2,7 @@ library(tidyverse)
 library(jsonlite)
 
 
-source_files <- list.files("sources/", pattern = "*.json", full.names = TRUE)
+source_files <- list.files("sources/", pattern = "*.json$", full.names = TRUE)
 
 votes <-
     map_dfr(source_files, 
