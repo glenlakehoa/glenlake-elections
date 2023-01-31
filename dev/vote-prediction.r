@@ -28,18 +28,20 @@ predictions <-
     unnest(predictions)
 
 
-predictions %>%
+preds <- predictions %>%
     ggplot() +
     aes(daysuntilelection, .fitted) +
     geom_line() +
     geom_hline(yintercept = 120, color = "gray70") +
     geom_point(data = votes, aes(y = votesreceived)) +
     geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = .1) +
+    labs(x = "days until election", y = "") +
     scale_x_reverse() +
     facet_wrap(~year) +
     coord_cartesian(ylim = c(0, 180))
 
-ggsave("graphs/vote-predictions.png", width = 6, height = 6)
+ggsave("graphs/vote-predictions.png", width = 6, height = 6,
+        plot = preds)
 
 
 
@@ -132,7 +134,7 @@ quorum_model <- votemodeldata %>%
 
 ggsave("graphs/vote-diagnostics.png", width = 8, height = 8)
 
-boundingbox <- tibble(x = c(200, 120, 120, 200), y = c(10, 10, 4, 4))
+boundingbox <- tibble(x = c(400, 120, 120, 400), y = c(20, 20, 4, 4))
 
 votemodeldata %>%
     mutate(
@@ -145,6 +147,14 @@ votemodeldata %>%
         y = estimate_daysuntilelection,
         color = currentyear
     ) +
+    geom_polygon(
+        data = boundingbox,
+        inherit.aes = FALSE,
+        aes(x, y),
+        fill = NA,
+        lty = 2,
+        color = "#295043"
+    ) +
     geom_point(shape = 10, size = 4, show.legend = FALSE) +
     geom_errorbar(show.legend = FALSE,
         aes(ymin = lower_daysuntilelection, ymax = upper_daysuntilelection)
@@ -155,16 +165,12 @@ votemodeldata %>%
     geom_label(aes(label = year), size = 2, show.legend = FALSE) +
     expand_limits(y = 0) +
     scale_color_manual(values = c("TRUE" = "#295043", "FALSE" = "#D3BDA8")) +
-    scale_x_reverse(limits = c(200, 0)) +
-    scale_y_reverse(limits = c(10, 0)) +
-    geom_polygon(
-        data = boundingbox,
-        inherit.aes = FALSE,
-        aes(x, y),
-        fill = NA,
-        lty = 2,
-        color = "#295043"
-    ) +
-    labs(x = "Estimated votes", y = "Voting rate")
+    scale_x_continuous(breaks = 20 * 0:10) +
+    scale_y_continuous(breaks = 2 * 0:20) +
+    coord_cartesian(xlim = c(0, 200), ylim = c(0, 10)) +
+    labs(x = "Estimated votes", y = "Voting rate (per day)") +
+    inset_element(preds + theme(plot.background = element_rect(fill = "transparent")),
+                 .01, .45, .5, .99)
+
 
 ggsave("graphs/vote-targets.png", width = 7, height = 6)
