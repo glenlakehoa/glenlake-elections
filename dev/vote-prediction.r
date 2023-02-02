@@ -124,7 +124,7 @@ quorum_model <- votemodeldata %>%
     geom_point() +
     geom_errorbar(aes(ymin = q_low, ymax = q_high)) +
     geom_point(data = quorum_reached, shape = 10, size = 4) +
-    scale_y_continuous(limits = c(0, NA)) +
+    coord_cartesian(ylim = c(-3, NA)) +
     geom_hline(yintercept = 0, color = "red") +
     labs(x = "Year", y = "Quorum reached (in days before election)")
 ) + plot_annotation(
