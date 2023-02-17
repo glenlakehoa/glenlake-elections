@@ -117,8 +117,9 @@ lognormal_plot <-
     labs(x = "", y = "", title = "Tenure CDF") +
     theme(plot.background = element_blank())
 
-tenure_plot + inset_element(lognormal_plot, .5, .1, .97, .4)
+finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .1, .97, .4)
 
 ggsave("graphs/boardmember_tenure_with_dist.png",
-    width = 6, height = 7
+    width = 6, height = 7,
+    plot = finalplot
 )
