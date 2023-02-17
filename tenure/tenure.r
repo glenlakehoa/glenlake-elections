@@ -65,15 +65,15 @@ tenure_plot <-
         caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
     ) +
     annotate("text",
-        x = median_tenure + .05, y = 3, size = 3,
-        label = "Median tenure\n(all board members)", hjust = 0
+        x = median_tenure + .05, y = 3, size = 3, , hjust = 0,
+        label = glue::glue("Median tenure: {round(median_tenure,1)} years\n(all board members)") # nolint
     ) +
     annotate("text",
         x = 2.5, y = 20, label = board_comment$comment,
         size = 3, hjust = 0
     )
 
-ggsave("graphs/boardmember_tenure.png",
+ggsave("tenure/boardmember_tenure.png",
     width = 6, height = 7,
     plot = tenure_plot
 )
@@ -117,9 +117,16 @@ lognormal_plot <-
     labs(x = "", y = "", title = "Tenure CDF") +
     theme(plot.background = element_blank())
 
-finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .1, .97, .4)
+finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .2, .97, .5) 
 
-ggsave("graphs/boardmember_tenure_with_dist.png",
+ggsave("tenure/boardmember_tenure_with_dist.png",
     width = 6, height = 7,
     plot = finalplot
+)
+
+finalplot2 <- tenure_plot + theme(axis.text.y=element_blank())+ inset_element(lognormal_plot, .5, .2, .97, .5) 
+
+ggsave("tenure/boardmember_tenure_with_dist_nonames.png",
+    width = 6, height = 7,
+    plot = finalplot2
 )
