@@ -7,7 +7,8 @@ theme_set(
             plot.title.position = "plot",
             plot.caption = element_text(hjust = 0),
             plot.caption.position = "plot",
-            panel.grid.minor = element_blank()
+            panel.grid.minor = element_blank(),
+            axis.ticks = element_blank()
         )
 )
 
