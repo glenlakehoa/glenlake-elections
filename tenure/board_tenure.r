@@ -145,9 +145,10 @@ board_tenure_raw %>%
     geom_point(aes(x = start, color = active), size = 2) + 
     geom_point(aes(x = resignation, color = active, shape = active), size = 2) + 
     geom_segment(aes(yend = name, x = start, xend = resignation, color = active), size = 1.5) +
+    scale_x_date(date_breaks = "1 year", date_label = "%Y") +
     scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "gray70")) +
     scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) + 
     theme(legend.position = "none") + 
     labs(x = "", y = "")
 
-ggsave("tenure/boardmember_timeline.png", height = 8, width = 8)
+ggsave("tenure/boardmember_timeline.png", height = 6, width = 7)
