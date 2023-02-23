@@ -131,3 +131,23 @@ ggsave("tenure/boardmember_tenure_with_dist_nonames.png",
     width = 6, height = 7,
     plot = finalplot2
 )
+
+#
+# board composition
+#
+
+board_tenure_raw %>%
+    group_by(name) %>%
+    mutate(first_start = min(start)) %>%
+    ungroup %>%
+    mutate(name = fct_reorder(name, desc(first_start))) %>%
+    ggplot + aes(y = name) + 
+    geom_point(aes(x = start, color = active), size = 2) + 
+    geom_point(aes(x = resignation, color = active, shape = active), size = 2) + 
+    geom_segment(aes(yend = name, x = start, xend = resignation, color = active), size = 1.5) +
+    scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "gray70")) +
+    scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) + 
+    theme(legend.position = "none") + 
+    labs(x = "", y = "")
+
+ggsave("tenure/boardmember_timeline.png", height = 8, width = 8)
