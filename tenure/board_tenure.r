@@ -118,14 +118,15 @@ lognormal_plot <-
     labs(x = "", y = "", title = "Tenure CDF") +
     theme(plot.background = element_blank())
 
-finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .2, .97, .5) 
+finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .2, .97, .5)
 
 ggsave("tenure/boardmember_tenure_with_dist.png",
     width = 6, height = 7,
     plot = finalplot
 )
 
-finalplot2 <- tenure_plot + theme(axis.text.y=element_blank())+ inset_element(lognormal_plot, .5, .2, .97, .5) 
+finalplot2 <- tenure_plot + theme(axis.text.y = element_blank()) +
+    inset_element(lognormal_plot, .5, .2, .97, .5)
 
 ggsave("tenure/boardmember_tenure_with_dist_nonames.png",
     width = 6, height = 7,
@@ -139,16 +140,35 @@ ggsave("tenure/boardmember_tenure_with_dist_nonames.png",
 board_tenure_raw %>%
     group_by(name) %>%
     mutate(first_start = min(start)) %>%
-    ungroup %>%
+    ungroup() %>%
     mutate(name = fct_reorder(name, desc(first_start))) %>%
-    ggplot + aes(y = name) + 
-    geom_point(aes(x = start, color = active), size = 2) + 
-    geom_point(aes(x = resignation, color = active, shape = active), size = 2) + 
-    geom_segment(aes(yend = name, x = start, xend = resignation, color = active), size = 1.5) +
+    ggplot() + aes(y = name) +
+    geom_point(aes(x = start, color = active), size = 2) +
+    geom_point(aes(
+        x = resignation,
+        color = active,
+        shape = active
+    ),
+    size = 2
+    ) +
+    geom_segment(aes(
+        yend = name,
+        x = start,
+        xend = resignation,
+        color = active
+    ),
+    size = 1.5
+    ) +
+    geom_vline(xintercept = lubridate::ymd(20180209), lty = 1, alpha = .3, color = "grey70", size = 2) + 
+    annotate("text", x = lubridate::ymd(20180309), y = 2.5, label = "Owner-elected", hjust = 0, size = 2, alpha = .7) +
+    annotate("text", x = lubridate::ymd(20180109), y = 2.5, label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7) +
     scale_x_date(date_breaks = "1 year", date_label = "%Y") +
     scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "gray70")) +
-    scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) + 
-    theme(legend.position = "none") + 
-    labs(x = "", y = "")
+    scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) +
+    theme(legend.position = "none") +
+    labs(
+        x = "", y = "",
+        caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
+    )
 
 ggsave("tenure/boardmember_timeline.png", height = 6, width = 7)
