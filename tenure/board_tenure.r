@@ -12,6 +12,8 @@ theme_set(
         )
 )
 
+glcolors <- list(green = "#295043", brown = "#D3BDA8")
+
 pdf_lognorm <- function(x, mu, sig) {
     .5 * (1 + pracma::erf((log(x) - mu) / (sqrt(2) * sig)))
 }
@@ -60,7 +62,10 @@ tenure_plot <-
         xintercept = median_tenure, lty = 1,
         alpha = .5, size = 2, color = "#d95f02"
     ) +
-    scale_fill_manual(values = c("0" = "#7570b3", "1" = "#1b9e77")) +
+    scale_fill_manual(values = c(
+        "0" = glcolors[["brown"]],
+        "1" = glcolors[["green"]]
+    )) +
     labs(
         x = "Total tenure (in years)", y = "",
         caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
@@ -142,7 +147,8 @@ board_tenure_raw %>%
     mutate(first_start = min(start)) %>%
     ungroup() %>%
     mutate(name = fct_reorder(name, desc(first_start))) %>%
-    ggplot() + aes(y = name) +
+    ggplot() +
+    aes(y = name) +
     geom_point(aes(x = start, color = active), size = 2) +
     geom_point(aes(
         x = resignation,
@@ -159,11 +165,23 @@ board_tenure_raw %>%
     ),
     size = 1.5
     ) +
-    geom_vline(xintercept = lubridate::ymd(20180209), lty = 1, alpha = .3, color = "grey70", size = 2) + 
-    annotate("text", x = lubridate::ymd(20180309), y = 2.5, label = "Owner-elected", hjust = 0, size = 2, alpha = .7) +
-    annotate("text", x = lubridate::ymd(20180109), y = 2.5, label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7) +
+    geom_vline(
+        xintercept = lubridate::ymd(20180209), lty = 1,
+        alpha = .3, color = "grey70", size = 2
+    ) +
+    annotate("text",
+        x = lubridate::ymd(20180309), y = 2.5,
+        label = "Owner-elected", hjust = 0, size = 2, alpha = .7
+    ) +
+    annotate("text",
+        x = lubridate::ymd(20180109), y = 2.5,
+        label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7
+    ) +
     scale_x_date(date_breaks = "1 year", date_label = "%Y") +
-    scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "gray70")) +
+    scale_color_manual(values = c(
+        "TRUE" = glcolors[["green"]],
+        "FALSE" = glcolors[["brown"]]
+    )) +
     scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) +
     theme(legend.position = "none") +
     labs(
