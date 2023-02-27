@@ -1,6 +1,9 @@
 library(tidyverse)
 library(patchwork)
 
+load("Rdata/votes.Rdata")
+meetingdates <- votes %>% distinct(meetingdate) %>% pull(meetingdate)
+
 theme_set(
     theme_light() +
         theme(
@@ -166,8 +169,8 @@ board_tenure_raw %>%
     size = 1.5
     ) +
     geom_vline(
-        xintercept = lubridate::ymd(20180209), lty = 1,
-        alpha = .3, color = "grey70", size = 2
+        xintercept = meetingdates, lty = 1,
+        alpha = .1, color = "grey70", size = 2
     ) +
     annotate("text",
         x = lubridate::ymd(20180309), y = 2.5,
