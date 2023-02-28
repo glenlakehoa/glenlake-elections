@@ -122,10 +122,14 @@ lognormal_plot <-
     ggplot() +
     aes(x = ten_length) +
     geom_point(aes(y = cdf), alpha = .3) +
-    geom_line(aes(y = cdf_simul_log)) +
-    geom_vline(xintercept = logmn) +
-    labs(x = "", y = "", title = "Tenure CDF") +
-    theme(plot.background = element_blank())
+    geom_line(aes(y = cdf_simul_log), alpha = .2) +
+    geom_vline(xintercept = exp(logparam[["mean"]]), alpha = .2) +
+    labs(x = "", y = "", title = "Tenure log-normal CDF") +
+    theme(
+        plot.background = element_blank(),
+        plot.title = element_text(size = 8, hjust = .5),
+        axis.text = element_text(size = 6)
+        )
 
 finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .2, .97, .5)
 
