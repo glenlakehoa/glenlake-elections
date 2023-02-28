@@ -1,5 +1,6 @@
 library(tidyverse)
 library(patchwork)
+library(lubridate)
 
 load("Rdata/votes.Rdata")
 meetingdates <- votes %>% distinct(meetingdate) %>% pull(meetingdate)
