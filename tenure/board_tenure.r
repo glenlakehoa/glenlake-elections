@@ -174,11 +174,11 @@ board_tenure_raw %>%
         alpha = .1, color = "grey70", size = 2
     ) +
     annotate("text",
-        x = lubridate::ymd(20180309), y = 2.5,
+        x = lubridate::ymd(20180208) + days(21), y = 2.5,
         label = "Owner-elected", hjust = 0, size = 2, alpha = .7
     ) +
     annotate("text",
-        x = lubridate::ymd(20180109), y = 2.5,
+        x = lubridate::ymd(20180208) - days(21), y = 2.5,
         label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7
     ) +
     scale_x_date(date_breaks = "1 year", date_label = "%Y") +
@@ -189,7 +189,7 @@ board_tenure_raw %>%
     scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) +
     theme(legend.position = "none") +
     labs(
-        x = "", y = "",
+        x = "", y = "", title = "Glenlake HOA board member timeline",
         caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
     )
 
