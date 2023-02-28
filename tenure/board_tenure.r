@@ -197,7 +197,7 @@ board_tenure_raw %>%
         "FALSE" = glcolors[["brown"]]
     )) +
     scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) +
-    theme(legend.position = "none") +
+    theme(legend.position = "none", panel.grid = element_blank(),) +
     labs(
         x = "", y = "", title = "Glenlake HOA board member timeline",
         caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
