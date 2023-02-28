@@ -32,10 +32,17 @@ appointed <-
     filter(!(start %in% meetingdates) | resignation != today() & active == 1) %>%
     arrange(tenure)
 
+elected_now <-
+    board_tenure_raw %>%
+    filter(board > 2017) %>%
+    filter((start %in% meetingdates) & active == 1) %>%
+    arrange(tenure)
+
 tenure_summary <-
     glue::glue("Out of the total {nrow(all)} board positions,\n",
             "{nrow(fullterm)} members completed their full term\n",
-            "while {nrow(resigned)} resigned prematurely. There\n",
-            "were {nrow(appointed)} mid-term appointments.")
+            "while {nrow(resigned)} resigned prematurely with\n",
+            "{nrow(appointed)} mid-term appointments. There\n",
+            "are {nrow(elected_now)} elected board members now.")
 
 board_member_count <- board_tenure_raw %>% count(name) %>% nrow()
