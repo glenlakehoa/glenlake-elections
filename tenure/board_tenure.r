@@ -150,6 +150,8 @@ ggsave("tenure/boardmember_tenure_with_dist_nonames.png",
 # board composition
 #
 
+source("tenure/filtering.r")
+
 board_tenure_raw %>%
     group_by(name) %>%
     mutate(first_start = min(start)) %>%
@@ -184,6 +186,10 @@ board_tenure_raw %>%
     annotate("text",
         x = lubridate::ymd(20180208) - days(21), y = 2.5,
         label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7
+    ) +
+    annotate("text",
+        x = lubridate::ymd(20210208) + weeks(2), y = board_member_count - 3,
+        label = tenure_summary, hjust = 0, size = 3, alpha = .9
     ) +
     scale_x_date(date_breaks = "1 year", date_label = "%Y") +
     scale_color_manual(values = c(
