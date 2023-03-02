@@ -64,7 +64,7 @@ tenure_plot <-
     geom_col(show.legend = FALSE) +
     geom_vline(
         xintercept = median_tenure, lty = 1,
-        alpha = .5, size = 2, color = "#d95f02"
+        alpha = .5, linewidth = 2, color = "#d95f02"
     ) +
     scale_fill_manual(values = c(
         "0" = glcolors[["brown"]],
@@ -173,11 +173,11 @@ board_tenure_raw %>%
         xend = resignation,
         color = active
     ),
-    size = 1.5
+    linewidth = 1.5
     ) +
     geom_vline(
         xintercept = meetingdates, lty = 1,
-        alpha = .1, color = "grey70", size = 2
+        alpha = .1, color = "grey70", linewidth = 2
     ) +
     annotate("text",
         x = lubridate::ymd(20180208) + days(21), y = 2.5,
@@ -197,7 +197,7 @@ board_tenure_raw %>%
         "FALSE" = glcolors[["brown"]]
     )) +
     scale_shape_manual(values = c("TRUE" = 1, "FALSE" = 16)) +
-    theme(legend.position = "none", panel.grid = element_blank(),) +
+    theme(legend.position = "none", panel.grid = element_blank()) +
     labs(
         x = "", y = "", title = "Glenlake HOA board member timeline",
         caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
