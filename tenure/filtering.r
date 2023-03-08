@@ -29,7 +29,7 @@ resigned <- bind_rows(
 appointed <-
     board_tenure_raw %>%
     filter(board > 2017) %>%
-    filter(!(start %in% meetingdates) | resignation != today() & active == 1) %>%
+    filter(!(start %in% meetingdates) | resignation != now & active == 1) %>%
     arrange(tenure)
 
 elected_now <-
