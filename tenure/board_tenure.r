@@ -188,7 +188,7 @@ board_tenure_raw %>%
         label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7
     ) +
     annotate("label",
-        x = lubridate::ymd(20210208) - weeks(10), y = board_member_count - 3,
+        x = lubridate::ymd(20170801) - weeks(1), y = 8,
         label = tenure_summary, hjust = 0, size = 3, alpha = .9
     ) +
     scale_x_date(date_breaks = "1 year", date_label = "%Y") +
