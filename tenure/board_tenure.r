@@ -112,7 +112,7 @@ logmn <- exp(logparam[["mean"]] + .5 * logparam[["sd"]]^2)
 
 board_cdf <-
     tibble(
-        ten_length = seq(0, ceiling(max(board_tenure$total_tenure)), .1),
+        ten_length = seq(0, ceiling(max(board_tenure$total_tenure)), .2),
         cdf = map_dbl(ten_length, ~ nrow(board_tenure %>% filter(total_tenure < .x))) / nrow(board_tenure), # nolint
         cdf_simul_log = map_dbl(ten_length, ~ pdf_lognorm(.x, logparam[["mean"]], logparam[["sd"]])) # nolint
     )
