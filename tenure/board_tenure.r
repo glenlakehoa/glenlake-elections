@@ -25,7 +25,8 @@ pdf_lognorm <- function(x, mu, sig) {
 now <- lubridate::today()
 pdate <- format(now, format = "%b %d, %Y")
 
-board_tenure_raw <- read_csv("sources/boardmember_tenure.csv") %>%
+board_tenure_raw <- 
+    read_csv("sources/boardmember_tenure.csv", col_types = "ccDD") %>%
     mutate(active = is.na(resignation)) %>%
     replace_na(list(resignation = now)) %>%
     mutate(tenure = (resignation - start) / lubridate::dyears(1))
