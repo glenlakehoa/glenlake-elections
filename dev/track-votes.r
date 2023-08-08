@@ -47,12 +47,12 @@ track_data_by_year <- function(vote_data, yr) {
         geom_hline(
             yintercept = meeting_quorum,
             color = "#D3BDA8",
-            size = 1
+            linewidth = 1
         ) +
         geom_vline(
             xintercept = meeting_date,
             lty = 1,
-            color = "#D3BDA8", size = 1
+            color = "#D3BDA8", linewidth = 1
         ) +
         annotate("text",
             x = meeting_date + days(1),
@@ -64,7 +64,7 @@ track_data_by_year <- function(vote_data, yr) {
         geom_point(size = 2, color = "#295043") +
         geom_line(lty = 1, color = "#295043") +
         labs(
-            x = "Date",
+            x = "",
             y = "Votes received",
             title = glue::glue("Glen Lake elections {yr}"),
             subtitle = subtitle,
@@ -88,7 +88,8 @@ track_data_by_year <- function(vote_data, yr) {
             plot.caption.position = "plot",
             plot.caption = element_text(hjust = 0, size = 6),
             plot.title.position = "plot",
-            panel.grid.minor = element_blank()
+            panel.grid.minor = element_blank(),
+            axis.title.x = element_blank()
         ) +
         inset_element(
             p = logoimage,

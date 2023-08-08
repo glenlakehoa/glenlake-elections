@@ -109,7 +109,7 @@ quorum_model <- votemodeldata %>%
     geom_point(data = max_votes, aes(y = votes), shape = 10, size = 4) +
     geom_errorbar(aes(ymin = lower_intercept, ymax = upper_intercept)) +
     geom_hline(yintercept = 120, color = "red") +
-    labs(x = "Year", y = "Estimated votes")) +
+    labs(x = "", y = "Estimated votes")) + theme(axis.title.x = element_blank()) +
 (votemodeldata %>%
     ggplot() +
     aes(year, estimate_daysuntilelection) +
@@ -117,7 +117,8 @@ quorum_model <- votemodeldata %>%
     geom_errorbar(aes(ymin = lower_daysuntilelection,
                       ymax = upper_daysuntilelection)) +
     geom_hline(yintercept = 120 / 30, color = "red") +
-    labs(x = "Year", y = "Voting rate")) /
+    theme(axis.title.x = element_blank()) +
+    labs(x = "", y = "Voting rate")) /
 (quorum_model %>%
     ggplot() +
     aes(year, q_reach) +
@@ -126,7 +127,8 @@ quorum_model <- votemodeldata %>%
     geom_point(data = quorum_reached, shape = 10, size = 4) +
     coord_cartesian(ylim = c(-3, NA)) +
     geom_hline(yintercept = 0, color = "red") +
-    labs(x = "Year", y = "Quorum reached (in days before election)")
+    labs(x = "", y = "Quorum reached (in days before election)") +
+    theme(axis.title.x = element_blank())
 ) + plot_annotation(
   title = "Incoming vote analysis",
   subtitle = "Target minimums in red; predictions in error bars; Actual data \U2295"

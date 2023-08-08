@@ -31,7 +31,7 @@ quorum_reached %>%
     geom_line(
         data = modelfit,
         color = "#D3BDA8",
-        size = 2, lty = 1, alpha = .4
+        linewidth = 2, lty = 1, alpha = .4
     ) +
     geom_errorbar(
         data = modelfit,
