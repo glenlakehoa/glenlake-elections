@@ -40,15 +40,16 @@ preds <- predictions %>%
     facet_wrap(~year) +
     coord_cartesian(ylim = c(0, 180))
 
-ggsave("graphs/vote-predictions.png", width = 6, height = 6,
-        plot = preds)
+ggsave("graphs/vote-predictions.png",
+    width = 6, height = 6,
+    plot = preds
+)
 
 
 
 votemodeldata <-
     votemodels %>%
-    mutate(dfs = map(data, ~ nrow(.x) - 2)) %>%
-    unnest(dfs) %>%
+    mutate(dfs = map_int(data, ~ nrow(.x) - 2)) %>%
     mutate(qt = qt(pnorm(1), df = dfs)) %>%
     mutate(params = map(linmod, broom::tidy)) %>%
     unnest(params) %>%
@@ -109,30 +110,33 @@ quorum_model <- votemodeldata %>%
     geom_point(data = max_votes, aes(y = votes), shape = 10, size = 4) +
     geom_errorbar(aes(ymin = lower_intercept, ymax = upper_intercept)) +
     geom_hline(yintercept = 120, color = "red") +
-    labs(x = "", y = "Estimated votes")) + theme(axis.title.x = element_blank()) +
-(votemodeldata %>%
-    ggplot() +
-    aes(year, estimate_daysuntilelection) +
-    geom_point() +
-    geom_errorbar(aes(ymin = lower_daysuntilelection,
-                      ymax = upper_daysuntilelection)) +
-    geom_hline(yintercept = 120 / 30, color = "red") +
+    labs(x = "", y = "Estimated votes")) +
     theme(axis.title.x = element_blank()) +
-    labs(x = "", y = "Voting rate")) /
-(quorum_model %>%
-    ggplot() +
-    aes(year, q_reach) +
-    geom_point() +
-    geom_errorbar(aes(ymin = q_low, ymax = q_high)) +
-    geom_point(data = quorum_reached, shape = 10, size = 4) +
-    coord_cartesian(ylim = c(-3, NA)) +
-    geom_hline(yintercept = 0, color = "red") +
-    labs(x = "", y = "Quorum reached (in days before election)") +
-    theme(axis.title.x = element_blank())
-) + plot_annotation(
-  title = "Incoming vote analysis",
-  subtitle = "Target minimums in red; predictions in error bars; Actual data \U2295"
-)
+    (votemodeldata %>%
+        ggplot() +
+        aes(year, estimate_daysuntilelection) +
+        geom_point() +
+        geom_errorbar(aes(
+            ymin = lower_daysuntilelection,
+            ymax = upper_daysuntilelection
+        )) +
+        geom_hline(yintercept = 120 / 30, color = "red") +
+        theme(axis.title.x = element_blank()) +
+        labs(x = "", y = "Voting rate")) /
+        (quorum_model %>%
+            ggplot() +
+            aes(year, q_reach) +
+            geom_point() +
+            geom_errorbar(aes(ymin = q_low, ymax = q_high)) +
+            geom_point(data = quorum_reached, shape = 10, size = 4) +
+            coord_cartesian(ylim = c(-3, NA)) +
+            geom_hline(yintercept = 0, color = "red") +
+            labs(x = "", y = "Quorum reached (in days before election)") +
+            theme(axis.title.x = element_blank())
+        ) + plot_annotation(
+        title = "Incoming vote analysis",
+        subtitle = "Target minimums in red; predictions in error bars; Actual data \U2295" # nolint
+    )
 
 ggsave("graphs/vote-diagnostics.png", width = 8, height = 8)
 
@@ -158,10 +162,12 @@ votemodeldata %>%
         color = "#295043"
     ) +
     geom_point(shape = 10, size = 4, show.legend = FALSE) +
-    geom_errorbar(show.legend = FALSE,
+    geom_errorbar(
+        show.legend = FALSE,
         aes(ymin = lower_daysuntilelection, ymax = upper_daysuntilelection)
     ) +
-    geom_errorbar(show.legend = FALSE,
+    geom_errorbar(
+        show.legend = FALSE,
         aes(xmin = lower_intercept, xmax = upper_intercept, )
     ) +
     geom_label(aes(label = year), size = 2, show.legend = FALSE) +
@@ -171,8 +177,13 @@ votemodeldata %>%
     scale_y_continuous(breaks = 2 * 0:20) +
     coord_cartesian(xlim = c(0, 200), ylim = c(0, 10)) +
     labs(x = "Estimated votes", y = "Voting rate (per day)") +
-    inset_element(preds + theme(plot.background = element_rect(fill = "transparent")),
-                 .01, .45, .5, .99)
+    inset_element(
+        preds +
+            theme(plot.background = element_rect(
+                fill = "transparent"
+            )),
+        .01, .45, .5, .99
+    )
 
 
 ggsave("graphs/vote-targets.png", width = 7, height = 6)

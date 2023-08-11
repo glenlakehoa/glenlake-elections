@@ -16,7 +16,10 @@ quorum_reached <-
     ungroup()
 
 modelfit <-
-    lm(quorum_reached ~ year, data = quorum_reached %>% filter(year > 2018)) %>%
+    lm(quorum_reached ~ year,
+        data = quorum_reached %>%
+            filter(year > 2018)
+    ) %>%
     broom::augment(
         newdata = tibble(year = 2018:2025),
         interval = "confidence"
