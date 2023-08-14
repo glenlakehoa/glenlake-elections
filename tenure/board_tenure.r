@@ -3,7 +3,9 @@ library(patchwork)
 library(lubridate)
 
 load("Rdata/votes.Rdata")
-meetingdates <- votes %>% distinct(meetingdate) %>% pull(meetingdate)
+meetingdates <- votes %>%
+    distinct(meetingdate) %>%
+    pull(meetingdate)
 
 theme_set(
     theme_light() +
@@ -25,7 +27,7 @@ pdf_lognorm <- function(x, mu, sig) {
 now <- lubridate::today()
 pdate <- format(now, format = "%b %d, %Y")
 
-board_tenure_raw <- 
+board_tenure_raw <-
     read_csv("sources/boardmember_tenure.csv", col_types = "ccDD") %>%
     mutate(active = is.na(resignation)) %>%
     replace_na(list(resignation = now)) %>%
@@ -130,7 +132,7 @@ lognormal_plot <-
         plot.background = element_blank(),
         plot.title = element_text(size = 8, hjust = .5),
         axis.text = element_text(size = 6)
-        )
+    )
 
 finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .2, .97, .5)
 
@@ -161,20 +163,22 @@ board_tenure_raw %>%
     ggplot() +
     aes(y = name) +
     geom_point(aes(x = start, color = active), size = 2) +
-    geom_point(aes(
-        x = resignation,
-        color = active,
-        shape = active
-    ),
-    size = 2
+    geom_point(
+        aes(
+            x = resignation,
+            color = active,
+            shape = active
+        ),
+        size = 2
     ) +
-    geom_segment(aes(
-        yend = name,
-        x = start,
-        xend = resignation,
-        color = active
-    ),
-    linewidth = 1.5
+    geom_segment(
+        aes(
+            yend = name,
+            x = start,
+            xend = resignation,
+            color = active
+        ),
+        linewidth = 1.5
     ) +
     geom_vline(
         xintercept = meetingdates, lty = 1,
@@ -189,7 +193,7 @@ board_tenure_raw %>%
         label = "Transition\nCommittee", hjust = 1, size = 2, alpha = .7
     ) +
     annotate("label",
-        x = lubridate::ymd(20170801) - weeks(1), y = 8,
+        x = lubridate::ymd(20170801) - weeks(1), y = 7,
         label = tenure_summary, hjust = 0, size = 3, alpha = .9
     ) +
     scale_x_date(date_breaks = "1 year", date_label = "%Y") +
@@ -202,6 +206,13 @@ board_tenure_raw %>%
     labs(
         x = "", y = "", title = "Glenlake HOA board member timeline",
         caption = glue::glue("{pdate}. Tenure includes all owner-elected boards and the transition committee") # nolint
-    )
+    ) +
+    annotate("label",
+        x = ymd(today()),
+        y = length(unique(board_tenure_raw$name)) - 1,
+        hjust = 1,
+        label = "Glenlake HOA board\nmember timeline"
+    ) +
+    theme(plot.title = element_blank())
 
 ggsave("tenure/boardmember_timeline.png", height = 6, width = 7)
