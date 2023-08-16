@@ -2,8 +2,5 @@
 #
 #
 
-source("dev/import.r")
-source("dev/track-votes.r")
-source("dev/vote-comparison.r")
-source("dev/vote-prediction.r")
-source("dev/average_tracking.r")
+scripts <- list.files(path = "./dev", pattern = ".*\\.r$", full.names = TRUE)
+purrr::walk(scripts, source)
