@@ -27,7 +27,6 @@ votes %>%
     scale_y_continuous(breaks = seq(0, 484, 20)) +
     geom_hline(yintercept = 120, alpha = .8, lty = 1, color = "gray70") +
     geom_line(show.legend = FALSE) +
-    geom_point(show.legend = FALSE) +
     scale_color_manual(values = colors) +
     scale_alpha_manual(values = alphas) +
     labs(
