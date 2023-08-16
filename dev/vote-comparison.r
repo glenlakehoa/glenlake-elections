@@ -1,6 +1,10 @@
 library(tidyverse)
 library(lubridate)
-theme_set(theme_light())
+theme_set(theme_light() + 
+    theme(
+        plot.title.position = "plot",
+        panel.grid.minor = element_blank()
+    ))
 
 load("Rdata/votes.Rdata")
 
