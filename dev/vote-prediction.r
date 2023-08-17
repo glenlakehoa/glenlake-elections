@@ -40,10 +40,10 @@ preds <- predictions %>%
     facet_wrap(~year) +
     coord_cartesian(ylim = c(0, 180))
 
-ggsave("graphs/vote-predictions.png",
-    width = 6, height = 6,
-    plot = preds
-)
+# ggsave("graphs/vote-predictions.png",
+#     width = 6, height = 6,
+#     plot = preds
+# )
 
 
 
