@@ -101,7 +101,7 @@ track_data_by_year <- function(yr, vote_data = votes) {
         top = 1
     )
 
-    ggplot2::ggsave(glue::glue("graphs/vote-tracking-{yr}.png"), width = 6, height = 4) # nolint
+    ggplot2::ggsave(glue::glue("graphs/year-tracking/vote-tracking-{yr}.png"), width = 6, height = 4) # nolint
     if (yr == max_year) ggplot2::ggsave("graphs/vote-tracking.png", width = 6, height = 4) # nolint
 }
 
