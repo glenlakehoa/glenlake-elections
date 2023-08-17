@@ -27,7 +27,8 @@ modelfit <-
     rename(quorum_reached = .fitted)
 
 
-quorum_reached %>%
+q_graph <- 
+    quorum_reached %>%
     ggplot() +
     aes(x = year, y = quorum_reached) +
     geom_hline(yintercept = 0) +
@@ -60,4 +61,6 @@ quorum_reached %>%
         plot.title.position = "plot"
     )
 
-ggsave("graphs/quorum_reached_prediction.png", width = 7, height = 5)
+# ggsave("graphs/quorum_reached_prediction.png", 
+#     width = 7, height = 5,
+#     plot = q_graph)
