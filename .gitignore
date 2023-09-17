@@ -5,3 +5,4 @@
 !images/glenlakelogo.jpg
 *.Rdata
 *.json-tmp
+*.html
