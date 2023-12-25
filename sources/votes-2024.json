@@ -3,8 +3,8 @@
   "meetingdate": "2024-02-10",
   "votes": 
     [
-        { "date": "2024-01-07", "votes": 0 },
-        { "date": "2024-01-13", "votes": 25 }
+        { "date": "2024-01-01", "votes": 0 },
+        { "date": "2024-01-08", "votes": 1 }
 
     ],
     "comment" : "this file contains simulated data, do not use"
