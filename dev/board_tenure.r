@@ -96,7 +96,8 @@ ggsave("graphs/boardmember_tenure.png",
 
 source("tenure/filtering.r")
 
-board_tenure_raw %>%
+timeline_g <-
+    board_tenure_raw %>%
     group_by(name) %>%
     mutate(first_start = min(tenure_start)) %>%
     ungroup() %>%
@@ -156,4 +157,6 @@ board_tenure_raw %>%
     ) +
     theme(plot.title = element_blank())
 
-ggsave("graphs/boardmember_timeline.png", height = 6, width = 7)
+ggsave("graphs/boardmember_timeline.png",
+    height = 6, width = 7,
+    plot = timeline_g)
