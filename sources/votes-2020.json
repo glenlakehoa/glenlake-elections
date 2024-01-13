@@ -13,6 +13,14 @@
         { "date": "2020-02-04", "votes": 127 },
         { "date": "2020-02-07", "votes": 132 },
         { "date": "2020-02-08", "votes": 140 }
+    ],
+    "board":
+    [
+        { "name" : "Patty Sanders", "tenure_start" : "2020-02-08", "tenure_end" : "2020-04-05"},
+        { "name" : "Chris White", "tenure_start" : "2020-02-08", "tenure_end" : "2021-01-07"},
+        { "name" : "Scot Halpin", "tenure_start" : "2020-02-08", "tenure_end" : "2022-02-05"},
+        { "name" : "Sherrie Stoffer", "tenure_start" : "2020-02-08", "tenure_end" : "2022-02-05"},
+        { "name" : "Andrea Wheeler", "tenure_start" : "2020-07-11", "tenure_end" : "2022-02-05"},
+        { "name" : "Ed McDuffie", "tenure_start" : "2021-01-07", "tenure_end" : "2022-02-05"}
     ]
 }
-

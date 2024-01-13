@@ -6,6 +6,15 @@
         { "date": "2019-01-23", "votes": 39 },
         { "date": "2019-02-01", "votes": 124 },
         { "date": "2019-02-09", "votes": 164 }
+    ],
+    "board":
+    [
+        { "name" : "Don Hazzard", "tenure_start" : "2019-02-09", "tenure_end" : "2021-02-06"},
+        { "name" : "Anthony Gaines", "tenure_start" : "2019-02-09", "tenure_end" : "2021-02-06"},
+        { "name" : "Randy Cohen", "tenure_start" : "2019-02-09", "tenure_end" : "2019-08-01"},
+        { "name" : "Scot Halpin", "tenure_start" : "2019-03-04", "tenure_end" : "2020-02-08"},
+        { "name" : "Sherrie Stoffer", "tenure_start" : "2019-05-02", "tenure_end" : "2020-02-08"},
+        { "name" : "Don Cole", "tenure_start" : "2019-12-05", "tenure_end" : "2021-02-06"}
     ]
 }
 

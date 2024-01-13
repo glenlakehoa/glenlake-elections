@@ -12,6 +12,14 @@
         { "date": "2021-02-01", "votes": 122 },
         { "date": "2021-02-03", "votes": 128 },
         { "date": "2021-02-06", "votes": 130 }
+    ],
+    "board":
+    [
+        { "name" : "Mendi Just", "tenure_start" : "2021-02-06", "tenure_end" : "2022-04-05"},
+        { "name" : "Zack Masker", "tenure_start" : "2021-02-06", "tenure_end" : "2022-05-05"},
+        { "name" : "Kelly Campfield", "tenure_start" : "2021-02-06", "tenure_end" : "2021-05-05"},
+        { "name" : "Eric Rice", "tenure_start" : "2021-06-01", "tenure_end" : "2023-02-04"}
     ]
 }
+
 

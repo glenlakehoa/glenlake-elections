@@ -9,6 +9,17 @@
         { "date": "2018-01-30", "votes": 126 },
         { "date": "2018-02-02", "votes": 136 },
         { "date": "2018-02-03", "votes": 143 }
+    ],
+    "board":
+    [
+        { "name" : "Rob Hanssen", "tenure_start" : "2018-02-03", "tenure_end" : "2019-09-06"},
+        { "name" : "Scott Ashe", "tenure_start" : "2018-02-03", "tenure_end" : "2018-07-21"},
+        { "name" : "Bill Brown", "tenure_start" : "2018-02-03", "tenure_end" : "2019-02-09"},
+        { "name" : "Barbara Lindsay", "tenure_start" : "2018-02-03", "tenure_end" : "2018-05-24"},
+        { "name" : "Steve Yantis", "tenure_start" : "2018-02-03", "tenure_end" : "2019-02-09"},
+        { "name" : "Chad Squires", "tenure_start" : "2018-02-03", "tenure_end" : "2020-02-08"},
+        { "name" : "Martha Cook", "tenure_start" : "2018-02-03", "tenure_end" : "2019-03-04"},
+        { "name" : "Amy Mabry", "tenure_start" : "2018-05-24", "tenure_end" : "2019-02-09"},
+        { "name" : "Heather Dill", "tenure_start" : "2018-07-21", "tenure_end" : "2019-03-04"}
     ]
 }
-

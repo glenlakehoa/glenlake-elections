@@ -15,6 +15,12 @@
         { "date": "2023-02-03", "votes": 119 },
         { "date": "2023-02-04", "votes": 131 }
     ],
+    "board":
+    [
+        { "name" : "Don Cole", "tenure_start" : "2023-02-04", "tenure_end" : ""},
+        { "name" : "Eric Rice", "tenure_start" : "2023-02-04", "tenure_end" : ""},
+        { "name" : "Sue Law", "tenure_start" : "2023-02-04", "tenure_end" : ""}
+    ],
     "comment" : ""
 }
 
