@@ -11,7 +11,7 @@
     [
         { "name" : "Scot Halpin", "tenure_start" : "2024-02-10", "tenure_end" : ""},
         { "name" : "Ed McDuffie", "tenure_start" : "2024-02-10", "tenure_end" : ""},
-        { "name" : "Eric Delisle", "tenure_start" : "2024-02-10", "tenure_end" : ""},
+        { "name" : "Eric DeLisle", "tenure_start" : "2024-02-10", "tenure_end" : ""},
         { "name" : "Tim Halley", "tenure_start" : "2024-02-10", "tenure_end" : ""}
     ],
     "comment" : "actual data"

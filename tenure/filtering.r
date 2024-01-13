@@ -1,41 +1,41 @@
 all <-
     board_tenure_raw %>%
-    filter(board > 2017)
+    filter(year > 2017)
 
 fullterm <-
     board_tenure_raw %>%
-    filter(board > 2017) %>%
-    filter(start %in% meetingdates & resignation %in% meetingdates)
+    filter(year > 2017) %>%
+    filter(tenure_start %in% meetingdates & tenure_end %in% meetingdates)
 
 active <-
     board_tenure_raw %>%
-    filter(board > 2017) %>%
+    filter(year > 2017) %>%
     filter(active == 1)
 
 resigned <- bind_rows(
     # elected, resigned
     board_tenure_raw %>%
-        filter(board > 2017) %>%
-        filter(start %in% meetingdates & !(resignation %in% meetingdates)),
+        filter(year > 2017) %>%
+        filter(tenure_start %in% meetingdates & !(tenure_end %in% meetingdates)),
 
     # appointed, resigned
     board_tenure_raw %>%
-        filter(board > 2017) %>%
-        filter(!(start %in% meetingdates) & !(resignation %in% meetingdates))
+        filter(year > 2017) %>%
+        filter(!(tenure_start %in% meetingdates) & !(tenure_end %in% meetingdates))
 ) %>%
     filter(active == 0) %>%
     arrange(tenure)
 
 appointed <-
     board_tenure_raw %>%
-    filter(board > 2017) %>%
-    filter(!(start %in% meetingdates) | resignation != now & active == 1) %>%
+    filter(year > 2017) %>%
+    filter(!(tenure_start %in% meetingdates) | tenure_end != now & active == 1) %>%
     arrange(tenure)
 
 elected_now <-
     board_tenure_raw %>%
-    filter(board > 2017) %>%
-    filter((start %in% meetingdates) & active == 1) %>%
+    filter(year > 2017) %>%
+    filter((tenure_start %in% meetingdates) & active == 1) %>%
     arrange(tenure)
 
 tenure_summary <-

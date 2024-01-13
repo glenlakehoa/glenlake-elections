@@ -49,7 +49,7 @@ yearfiles <-
 analysisfiles <-
     list.files(
         path = "graphs/",
-        pattern = "vote-.*\\.png$",
+        pattern = ".*\\.png$",
         full.names = TRUE
     )
 

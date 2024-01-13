@@ -20,6 +20,8 @@
         { "name" : "Chad Squires", "tenure_start" : "2018-02-03", "tenure_end" : "2020-02-08"},
         { "name" : "Martha Cook", "tenure_start" : "2018-02-03", "tenure_end" : "2019-03-04"},
         { "name" : "Amy Mabry", "tenure_start" : "2018-05-24", "tenure_end" : "2019-02-09"},
-        { "name" : "Heather Dill", "tenure_start" : "2018-07-21", "tenure_end" : "2019-03-04"}
+        { "name" : "Heather Dill", "tenure_start" : "2018-07-21", "tenure_end" : "2019-03-04"},
+        { "name" : "Scot Halpin", "tenure_start" : "2019-03-04", "tenure_end" : "2020-02-08"},
+        { "name" : "Sherrie Stoffer", "tenure_start" : "2019-05-02", "tenure_end" : "2020-02-08"}
     ]
 }

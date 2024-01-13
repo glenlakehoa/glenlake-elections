@@ -2,7 +2,10 @@ library(tidyverse)
 library(patchwork)
 library(lubridate)
 
+
+load("Rdata/board_tenure.Rdata")
 load("Rdata/votes.Rdata")
+
 meetingdates <- votes %>%
     distinct(meetingdate) %>%
     pull(meetingdate)
@@ -20,18 +23,14 @@ theme_set(
 
 glcolors <- list(green = "#295043", brown = "#D3BDA8")
 
-pdf_lognorm <- function(x, mu, sig) {
-    .5 * (1 + pracma::erf((log(x) - mu) / (sqrt(2) * sig)))
-}
-
 now <- lubridate::today()
 pdate <- format(now, format = "%b %d, %Y")
 
 board_tenure_raw <-
-    read_csv("sources/boardmember_tenure.csv", col_types = "ccDD") %>%
-    mutate(active = is.na(resignation)) %>%
-    replace_na(list(resignation = now)) %>%
-    mutate(tenure = (resignation - start) / lubridate::dyears(1))
+    board_tenure_dates %>%
+    mutate(active = is.na(tenure_end)) %>%
+    replace_na(list(tenure_end = now)) %>% 
+    mutate(tenure = (tenure_end - tenure_start) / lubridate::dyears(1))
 
 board_tenure <-
     board_tenure_raw %>%
@@ -86,67 +85,9 @@ tenure_plot <-
         size = 3, hjust = 0
     )
 
-ggsave("tenure/boardmember_tenure.png",
+ggsave("graphs/boardmember_tenure.png",
     width = 6, height = 7,
     plot = tenure_plot
-)
-
-
-logparam <-
-    with(
-        board_tenure,
-        list(
-            mean = mean(log(total_tenure)),
-            sd = sd(log(total_tenure))
-        )
-    )
-
-normparam <-
-    with(
-        board_tenure,
-        list(
-            mean = mean(total_tenure),
-            sd = sd(total_tenure)
-        )
-    )
-
-logmn <- exp(logparam[["mean"]] + .5 * logparam[["sd"]]^2)
-
-
-board_cdf <-
-    tibble(
-        ten_length = seq(0, ceiling(max(board_tenure$total_tenure)), .2),
-        cdf = map_dbl(ten_length, ~ nrow(board_tenure %>% filter(total_tenure < .x))) / nrow(board_tenure), # nolint
-        cdf_simul_log = map_dbl(ten_length, ~ pdf_lognorm(.x, logparam[["mean"]], logparam[["sd"]])) # nolint
-    )
-
-lognormal_plot <-
-    board_cdf %>%
-    ggplot() +
-    aes(x = ten_length) +
-    geom_point(aes(y = cdf), alpha = .3) +
-    geom_line(aes(y = cdf_simul_log), alpha = .2) +
-    geom_vline(xintercept = exp(logparam[["mean"]]), alpha = .2) +
-    labs(x = "", y = "", title = "Tenure log-normal CDF") +
-    theme(
-        plot.background = element_blank(),
-        plot.title = element_text(size = 8, hjust = .5),
-        axis.text = element_text(size = 6)
-    )
-
-finalplot <- tenure_plot + inset_element(lognormal_plot, .5, .2, .97, .5)
-
-ggsave("tenure/boardmember_tenure_with_dist.png",
-    width = 6, height = 7,
-    plot = finalplot
-)
-
-finalplot2 <- tenure_plot + theme(axis.text.y = element_blank()) +
-    inset_element(lognormal_plot, .5, .2, .97, .5)
-
-ggsave("tenure/boardmember_tenure_with_dist_nonames.png",
-    width = 6, height = 7,
-    plot = finalplot2
 )
 
 #
@@ -157,15 +98,15 @@ source("tenure/filtering.r")
 
 board_tenure_raw %>%
     group_by(name) %>%
-    mutate(first_start = min(start)) %>%
+    mutate(first_start = min(tenure_start)) %>%
     ungroup() %>%
     mutate(name = fct_reorder(name, desc(first_start))) %>%
     ggplot() +
     aes(y = name) +
-    geom_point(aes(x = start, color = active), size = 2) +
+    geom_point(aes(x = tenure_start, color = active), size = 2) +
     geom_point(
         aes(
-            x = resignation,
+            x = tenure_end,
             color = active,
             shape = active
         ),
@@ -174,8 +115,8 @@ board_tenure_raw %>%
     geom_segment(
         aes(
             yend = name,
-            x = start,
-            xend = resignation,
+            x = tenure_start,
+            xend = tenure_end,
             color = active
         ),
         linewidth = 1.5
@@ -215,4 +156,4 @@ board_tenure_raw %>%
     ) +
     theme(plot.title = element_blank())
 
-ggsave("tenure/boardmember_timeline.png", height = 6, width = 7)
+ggsave("graphs/boardmember_timeline.png", height = 6, width = 7)
