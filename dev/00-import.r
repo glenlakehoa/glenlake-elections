@@ -1,13 +1,12 @@
 library(tidyverse)
 library(jsonlite)
 
-
 source_files <- list.files("sources/", pattern = "*.json$", full.names = TRUE)
 
 votes <-
     map_dfr(
         source_files,
-        ~ jsonlite::read_json(.x)[1:4]
+        ~ read_json(.x)[c("year", "numberofhomes", "meetingdate", "votes")]
     ) %>%
     unnest_wider(votes) %>%
     rename(votesreceived = votes) %>%
@@ -25,7 +24,7 @@ save(votes, file = "Rdata/votes.Rdata")
 board_tenure_dates <-
     map_dfr(
         source_files,
-        ~ jsonlite::read_json(.x)[c(1, 5)]
+        ~ read_json(.x)[c("year", "board")]
     ) %>%
     unnest_wider(board) %>%
     mutate(across(
@@ -37,6 +36,4 @@ board_tenure_dates <-
     )) %>%
     arrange(tenure_start, name)
 
-
 save(board_tenure_dates, file = "Rdata/board_tenure.Rdata")
-
