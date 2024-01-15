@@ -21,6 +21,16 @@
         { "name" : "Eric Rice", "tenure_start" : "2023-02-04", "tenure_end" : ""},
         { "name" : "Sue Law", "tenure_start" : "2023-02-04", "tenure_end" : ""}
     ],
-    "comment" : ""
+    "comment" : "",
+    "results":
+    [
+        { "name": "Don Cole", "votes" : 100},
+        { "name": "Sue Law", "votes" : 102},
+        { "name": "Eric Rice", "votes" : 102},
+        { "name": "Darrel N", "votes" : 1},
+        { "name": "Paul Erber", "votes" : 1},
+        { "name": "Lorie M", "votes" : 1},
+        { "name": "Amanda P", "votes" : 1}
+    ]
 }
 

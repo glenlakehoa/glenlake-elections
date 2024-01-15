@@ -21,6 +21,15 @@
         { "name" : "Eric Rice", "tenure_start" : "2021-06-01", "tenure_end" : "2023-02-04"},
         { "name" : "Don Cole", "tenure_start" : "2022-05-31", "tenure_end" : "2023-02-04"},
         { "name" : "Sue Law", "tenure_start" : "2022-04-05", "tenure_end" : "2023-02-04"}
+    ],
+    "results":
+    [
+        { "name": "Menji Just", "votes" : 68},
+        { "name": "Zack Masker", "votes" : 68},
+        { "name": "Kelly Campfield", "votes" : 66},
+        { "name": "Willy Hines", "votes" : 53},
+        { "name": "Eric Rice", "votes" : 44},
+        { "name": "Stephen Barnwell", "votes" : 34}
     ]
 }
 

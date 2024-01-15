@@ -22,5 +22,16 @@
         { "name" : "Sherrie Stoffer", "tenure_start" : "2020-02-08", "tenure_end" : "2022-02-05"},
         { "name" : "Andrea Wheeler", "tenure_start" : "2020-07-11", "tenure_end" : "2022-02-05"},
         { "name" : "Ed McDuffie", "tenure_start" : "2021-01-07", "tenure_end" : "2022-02-05"}
+    ],
+    "results" :
+    [
+        { "name": "Scot Halpin", "votes" : 106},
+        { "name": "Sherrie Stoffer", "votes" : 103},
+        { "name": "Patty Sanders", "votes" : 101},
+        { "name": "Chris White", "votes" : 30},
+        { "name": "Debbie Herman", "votes" : 1},
+        { "name": "Nancy Justic", "votes" : 1},
+        { "name": "Rob Hanssen", "votes" : 1},
+        { "name": "George Troncoso", "votes" : 1}
     ]
 }

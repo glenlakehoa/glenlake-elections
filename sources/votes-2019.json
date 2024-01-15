@@ -13,6 +13,14 @@
         { "name" : "Anthony Gaines", "tenure_start" : "2019-02-09", "tenure_end" : "2021-02-06"},
         { "name" : "Randy Cohen", "tenure_start" : "2019-02-09", "tenure_end" : "2019-08-01"},
         { "name" : "Don Cole", "tenure_start" : "2019-12-05", "tenure_end" : "2021-02-06"}
+    ],
+    "results" :
+    [
+        { "name": "Don Hazzard", "votes" : 93},
+        { "name": "Randy Cohen", "votes" : 82},
+        { "name": "Aaron Baird", "votes" : null},
+        { "name": "Anthony Gaines", "votes" : 52},
+        { "name": "Chuck Coffman", "votes" : 50}
     ]
 }
 
