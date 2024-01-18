@@ -1,6 +1,7 @@
 { "year": 2017,
   "numberofhomes": null,
   "meetingdate": null,
+  "seats" : null,
   "votes": [],
   "board":
     [

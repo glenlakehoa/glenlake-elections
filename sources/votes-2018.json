@@ -1,6 +1,7 @@
 { "year": 2018,
   "numberofhomes": 460,
   "meetingdate": "2018-02-03",
+  "seats" : 7,
   "votes": 
     [
         { "date": "2018-01-25", "votes": 75 },

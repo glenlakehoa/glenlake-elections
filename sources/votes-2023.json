@@ -1,6 +1,7 @@
 { "year": 2023,
   "numberofhomes": 482,
   "meetingdate": "2023-02-04",
+  "seats" : 3,
   "votes": 
     [
         { "date": "2023-01-09", "votes": 13 },
