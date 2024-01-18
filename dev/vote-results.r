@@ -18,7 +18,7 @@ vote_results %>%
     mutate(
         name = fct_reorder(name, -votes)
     ) %>%
-    ungroup() %>% view()
+    ungroup() %>% 
     ggplot(aes(y = name, x = votes, group = year)) +
     geom_col() +
     facet_wrap(~year, scale = "free_y")
