@@ -26,6 +26,14 @@
     ], 
     "results" : 
     [        
-        
+        { "name" : "Scott Ashe", "votes" : 99},
+        { "name" : "Bill Brown", "votes" : 90},
+        { "name" : "Martha Cook", "votes" : 97},
+        { "name" : "Kristi Foster", "votes" : 34},
+        { "name" : "Rob Hanssen", "votes" : 98},
+        { "name" : "Barbara Lindsay", "votes" : 82},
+        { "name" : "Lynn Spencer", "votes" : 66},
+        { "name" : "Chad Squires", "votes" : 92},
+        { "name" : "Steve Yantis", "votes" : 87}
     ]
 }
