@@ -37,3 +37,14 @@ board_tenure_dates <-
     arrange(tenure_start, name)
 
 save(board_tenure_dates, file = "Rdata/board_tenure.Rdata")
+
+
+vote_results <-
+    map_dfr(
+        source_files,
+        ~ read_json(.x)[c("year", "results")]
+    ) %>%
+    unnest_wider(results) %>%
+    arrange(year)
+
+save(vote_results, file = "Rdata/vote_results.Rdata")
