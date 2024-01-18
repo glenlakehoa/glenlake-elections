@@ -4,10 +4,10 @@ library(lubridate)
 
 
 load("Rdata/board_tenure.Rdata")
-load("Rdata/votes.Rdata")
 
-meetingdates <- votes %>%
+meetingdates <- board_tenure_dates %>%
     distinct(meetingdate) %>%
+    drop_na() %>%
     pull(meetingdate)
 
 theme_set(

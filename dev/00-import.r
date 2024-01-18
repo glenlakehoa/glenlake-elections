@@ -24,11 +24,11 @@ save(votes, file = "Rdata/votes.Rdata")
 board_tenure_dates <-
     map_dfr(
         source_files,
-        ~ read_json(.x)[c("year", "board")]
+        ~ read_json(.x)[c("year", "meetingdate", "board")]
     ) %>%
     unnest_wider(board) %>%
     mutate(across(
-        starts_with("tenure"),
+        starts_with("tenure")|ends_with("date"),
         ~ case_when(
             .x == "" ~ ymd(NA_character_),
             TRUE ~ ymd(.x)
