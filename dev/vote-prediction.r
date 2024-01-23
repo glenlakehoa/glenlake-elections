@@ -173,9 +173,9 @@ votemodeldata %>%
     geom_label(aes(label = year), size = 2, show.legend = FALSE) +
     expand_limits(y = 0) +
     scale_color_manual(values = c("TRUE" = "#295043", "FALSE" = "#D3BDA8")) +
-    scale_x_continuous(breaks = 20 * 0:10) +
+    scale_x_continuous(breaks = 30 * 0:10) +
     scale_y_continuous(breaks = 2 * 0:20) +
-    coord_cartesian(xlim = c(0, 200), ylim = c(0, 10)) +
+    coord_cartesian(xlim = c(0, 240), ylim = c(0, 10)) +
     labs(x = "Estimated votes", y = "Voting rate (per day)") +
     inset_element(
         preds +
