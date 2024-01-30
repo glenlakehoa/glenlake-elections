@@ -18,11 +18,11 @@
     ],
     "board":
     [
-        { "name" : "Ed McDuffie", "tenure_start" : "2022-02-05", "tenure_end" : null},
-        { "name" : "Scot Halpin", "tenure_start" : "2022-02-05", "tenure_end" : null},
-        { "name" : "Keith Laye", "tenure_start" : "2022-02-05", "tenure_end" : null},
+        { "name" : "Ed McDuffie", "tenure_start" : "2022-02-05", "tenure_end" : "2024-02-10"},
+        { "name" : "Scot Halpin", "tenure_start" : "2022-02-05", "tenure_end" : "2024-02-10"},
+        { "name" : "Keith Laye", "tenure_start" : "2022-02-05", "tenure_end" : "2024-02-10"},
         { "name" : "Steve Yantis", "tenure_start" : "2022-02-05", "tenure_end" : "2022-05-31"},
-        { "name" : "Eric DeLisle", "tenure_start" : "2022-07-05", "tenure_end" : null}
+        { "name" : "Eric DeLisle", "tenure_start" : "2022-07-05", "tenure_end" : "2024-02-10"}
     ],
     "results":
     [

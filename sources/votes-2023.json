@@ -18,9 +18,9 @@
     ],
     "board":
     [
-        { "name" : "Don Cole", "tenure_start" : "2023-02-04", "tenure_end" : ""},
-        { "name" : "Eric Rice", "tenure_start" : "2023-02-04", "tenure_end" : ""},
-        { "name" : "Sue Law", "tenure_start" : "2023-02-04", "tenure_end" : ""}
+        { "name" : "Don Cole", "tenure_start" : "2023-02-04", "tenure_end" : null},
+        { "name" : "Eric Rice", "tenure_start" : "2023-02-04", "tenure_end" : null},
+        { "name" : "Sue Law", "tenure_start" : "2023-02-04", "tenure_end" : null}
     ],
     "comment" : "",
     "results":
