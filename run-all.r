@@ -2,7 +2,13 @@
 #
 #
 
-scripts <- list.files(path = "./dev", pattern = ".*\\.r$", full.names = TRUE)
+scripts <-
+    list.files(
+        path = "./scripts",
+        pattern = ".*\\.r$",
+        full.names = TRUE
+    )
+
 purrr::walk(scripts, source)
 
 source("genweb.r")
