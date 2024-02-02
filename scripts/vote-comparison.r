@@ -41,7 +41,7 @@ comp_g <-
         x = "Days until the Annual Meeting",
         y = "Votes received",
         title = glue::glue("Glen Lake elections {max_year}"),
-        subtitle = glue::glue("Comparison of {may_year} with previous years")
+        subtitle = glue::glue("Comparison of {max_year} with previous years")
     )
 
 ggsave("graphs/vote-comparison.png",
