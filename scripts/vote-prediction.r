@@ -4,7 +4,7 @@ library(patchwork)
 theme_set(theme_light())
 
 load("Rdata/votes.Rdata")
-
+source("defaults.r")
 
 votemodels <-
     votes %>%
@@ -32,7 +32,7 @@ preds <- predictions %>%
     ggplot() +
     aes(daysuntilelection, .fitted) +
     geom_line() +
-    geom_hline(yintercept = 120, color = "gray70") +
+    geom_hline(yintercept = 120, color = glcolors$light) +
     geom_point(data = votes, aes(y = votesreceived)) +
     geom_ribbon(aes(ymin = .lower, ymax = .upper), alpha = .1) +
     labs(x = "days until election", y = "") +
@@ -159,7 +159,7 @@ votemodeldata %>%
         aes(x, y),
         fill = NA,
         lty = 2,
-        color = "#295043"
+        color = glcolors$green
     ) +
     geom_point(shape = 10, size = 4, show.legend = FALSE) +
     geom_errorbar(
@@ -172,7 +172,9 @@ votemodeldata %>%
     ) +
     geom_label(aes(label = year), size = 2, show.legend = FALSE) +
     expand_limits(y = 0) +
-    scale_color_manual(values = c("TRUE" = "#295043", "FALSE" = "#D3BDA8")) +
+    scale_color_manual(
+        values = c("TRUE" = glcolors$green, "FALSE" = glcolors$tan)
+    ) +
     scale_x_continuous(breaks = 30 * 0:10) +
     scale_y_continuous(breaks = 2 * 0:20) +
     coord_cartesian(xlim = c(0, 240), ylim = c(0, 10)) +
