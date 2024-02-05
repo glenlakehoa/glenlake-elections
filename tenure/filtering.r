@@ -40,9 +40,9 @@ elected_now <-
 
 tenure_summary <-
     glue::glue("Out of the total {nrow(all)} board positions,\n",
-            "{nrow(fullterm)} members completed their full term\n",
-            "while {nrow(resigned)} resigned prematurely with\n",
-            "{nrow(appointed)} mid-term appointments. There\n",
+            "{nrow(fullterm)} members completed their full term,\n",
+            "{nrow(resigned)} resigned prematurely and\n",
+            "{nrow(appointed)} were appointed mid-term. There\n",
             "are {nrow(elected_now)} elected board members now.")
 
 board_member_count <- board_tenure_raw %>% count(name) %>% nrow()
