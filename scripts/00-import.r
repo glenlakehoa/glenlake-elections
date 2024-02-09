@@ -28,7 +28,7 @@ board_tenure_dates <-
     ) %>%
     unnest_wider(board) %>%
     mutate(across(
-        starts_with("tenure")|ends_with("date"),
+        starts_with("tenure") | ends_with("date"),
         ~ case_when(
             .x == "" ~ ymd(NA_character_),
             TRUE ~ ymd(.x)

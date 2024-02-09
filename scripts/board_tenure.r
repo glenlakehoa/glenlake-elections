@@ -29,7 +29,7 @@ pdate <- format(now, format = "%b %d, %Y")
 board_tenure_raw <-
     board_tenure_dates %>%
     mutate(active = is.na(tenure_end)) %>%
-    replace_na(list(tenure_end = now)) %>% 
+    replace_na(list(tenure_end = now)) %>%
     mutate(tenure = (tenure_end - tenure_start) / lubridate::dyears(1))
 
 board_tenure <-
@@ -159,4 +159,5 @@ timeline_g <-
 
 ggsave("graphs/boardmember_timeline.png",
     height = 6, width = 7,
-    plot = timeline_g)
+    plot = timeline_g
+)

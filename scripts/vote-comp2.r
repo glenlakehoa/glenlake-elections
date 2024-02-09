@@ -29,8 +29,8 @@ comp_models <-
     prep_data %>%
     nest(data = !historical) %>%
     mutate(
-        mods = map(data, ~lm(votesreceived ~ daysuntilelection, data = .x)),
-        preds = map(mods, ~broom::augment(.x, newdata = tibble(daysuntilelection = 0:30), interval = "prediction"))
+        mods = map(data, ~ lm(votesreceived ~ daysuntilelection, data = .x)),
+        preds = map(mods, ~ broom::augment(.x, newdata = tibble(daysuntilelection = 0:30), interval = "prediction"))
     ) %>%
     unnest(preds)
 
@@ -40,14 +40,14 @@ names(colorset) <- unique(prep_data$historical)
 
 comp_g <-
     comp_models %>%
-    ggplot(aes(x = daysuntilelection, y = .fitted, color = historical)) + 
-    geom_line() + 
+    ggplot(aes(x = daysuntilelection, y = .fitted, color = historical)) +
+    geom_line() +
     geom_ribbon(
-        aes(ymin = .lower, ymax = .upper, fill = historical), 
+        aes(ymin = .lower, ymax = .upper, fill = historical),
         alpha = .2,
-        show.legend = FALSE, 
+        show.legend = FALSE,
         linetype = 0
-    ) + 
+    ) +
     geom_point(
         data = prep_data, aes(y = votesreceived, color = historical),
         show.legend = FALSE,
@@ -59,23 +59,26 @@ comp_g <-
         y = "Votes received",
         title = "Comparison of incoming votes to previous years",
         color = "Comparison"
-    ) + 
+    ) +
     coord_cartesian(
         ylim = c(0, NA)
     ) +
-    geom_vline(xintercept = last_election,
+    geom_vline(
+        xintercept = last_election,
         linewidth = 2,
         alpha = .3,
         color = "gray60"
-        ) +
-    geom_hline(yintercept = 120,
+    ) +
+    geom_hline(
+        yintercept = 120,
         linewidth = 2,
         alpha = .3,
         color = "gray60"
-        ) +
+    ) +
     scale_color_manual(values = colorset) +
     scale_fill_manual(values = colorset)
 
-ggsave("graphs/comparison-previous-years.png", 
+ggsave("graphs/comparison-previous-years.png",
     width = 8, height = 5,
-    plot = comp_g)
+    plot = comp_g
+)

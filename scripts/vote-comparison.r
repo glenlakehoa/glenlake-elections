@@ -45,5 +45,6 @@ comp_g <-
     )
 
 ggsave("graphs/vote-comparison.png",
-    width = 6, height = 4, 
-    plot = comp_g)
+    width = 6, height = 4,
+    plot = comp_g
+)
