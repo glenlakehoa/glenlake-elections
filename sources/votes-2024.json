@@ -16,13 +16,14 @@
         { "date": "2024-01-30", "votes": 118 },
         { "date": "2024-02-01", "votes": 128 },
         { "date": "2024-02-05", "votes": 137 },
-        { "date": "2024-02-06", "votes": 139 }
+        { "date": "2024-02-06", "votes": 139 },
+        { "date": "2024-02-09", "votes": 143 }
     ],
     "board":
     [
         { "name": "Scot Halpin", "tenure_start": "2024-02-10", "tenure_end": null}
     ],
-    "comment" : "actual data, includes 1 proxy",
+    "comment" : "actual data, includes 1 proxy + 2 votes from Vandenburg",
     "results": 
     [
         { "name": "Scot Halpin", "votes" : null},
