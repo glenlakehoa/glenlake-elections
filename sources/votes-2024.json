@@ -17,19 +17,31 @@
         { "date": "2024-02-01", "votes": 128 },
         { "date": "2024-02-05", "votes": 137 },
         { "date": "2024-02-06", "votes": 139 },
-        { "date": "2024-02-09", "votes": 143 }
+        { "date": "2024-02-09", "votes": 143 },
+        { "date": "2024-02-10", "votes": 144 }
     ],
     "board":
     [
-        { "name": "Scot Halpin", "tenure_start": "2024-02-10", "tenure_end": null}
+        { "name": "Scot Halpin", "tenure_start": "2024-02-10", "tenure_end": null},
+        { "name": "Eric DeLisle", "tenure_start": "2024-02-10", "tenure_end": null},
+        { "name": "Tim Halley", "tenure_start": "2024-02-10", "tenure_end": null},
+        { "name": "Ed McDuffie", "tenure_start": "2024-02-10", "tenure_end": null}
     ],
-    "comment" : "actual data, includes 1 proxy + 2 votes from Vandenburg",
+    "comment" : "",
     "results": 
     [
-        { "name": "Scot Halpin", "votes" : null},
-        { "name": "Eric DeLisle", "votes" : null},
-        { "name": "Ed McDuffie", "votes" : null},
-        { "name": "Tim Halley", "votes" : null}
+        { "name": "Scot Halpin", "votes" : 124},
+        { "name": "Eric DeLisle", "votes" : 115},
+        { "name": "Ed McDuffie", "votes" : 111},
+        { "name": "Tim Halley", "votes" : 117},
+        { "name": "Jeff Greer", "votes" : 1},
+        { "name": "Darryl Massey", "votes" : 1},
+        { "name": "Rob Hanssen", "votes" : 2},
+        { "name": "Kristin Garland", "votes" : 2},
+        { "name": "Dave Garland", "votes" : 1},
+        { "name": "Vasily Karchenko", "votes" : 1},
+        { "name": "Matt Stanard", "votes" : 1},
+        { "name": "Amy Tate", "votes" : 1}
     ]
 }
 
