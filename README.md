@@ -1,5 +1,5 @@
 # glenlake-elections
-Tracking the votes for the Glen Lake Board elections
+Tracking the votes for the Glenlake Upstate Homeowners Association, Inc Board elections
 
 
 Usage to add new election years:
