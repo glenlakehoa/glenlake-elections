@@ -7,10 +7,17 @@
     ],
     "board":
     [
+        { "name": "Eric Rice", "tenure_start": "2025-02-08", "tenure_end": null},
+        { "name": "Amanda Goode", "tenure_start": "2025-02-08", "tenure_end": null},
+        { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": null}
     ],
     "comment" : "all info tentative, nothing has been decided yet on dates",
     "results": 
     [
+        { "name": "Eric Rice", "votes" : 0},
+        { "name": "Amanda Goode", "votes" : 0},
+        { "name": "Keosha Haney", "votes" : 0},
+        { "name": "Write-in", "votes" : 0}
     ]
 }
 
