@@ -4,15 +4,13 @@
   "seats" : 3,
   "votes": 
     [
-        { "date": "2025-01-01", "votes": 0 },
-        { "date": "2025-01-02", "votes": 0 },
-        { "date": "2025-01-03", "votes": 0 }
+        { "date": "2025-01-07", "votes": 1 },
+        { "date": "2025-01-10", "votes": 1 }
     ],
     "board":
     [
         { "name": "Eric Rice", "tenure_start": "2025-02-08", "tenure_end": null},
         { "name": "Diana Banks", "tenure_start": "2025-02-08", "tenure_end": null},
-        { "name": "Amanda Goode", "tenure_start": "2025-02-08", "tenure_end": null},
         { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": null}
     ],
     "comment" : "all info tentative, nothing has been decided yet on dates",
