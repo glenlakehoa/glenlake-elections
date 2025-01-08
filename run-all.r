@@ -2,6 +2,8 @@
 #
 #
 
+safe_source <- purrr::safely(source)
+
 scripts <-
     list.files(
         path = "./scripts",
@@ -9,6 +11,6 @@ scripts <-
         full.names = TRUE
     )
 
-purrr::walk(scripts, source)
+purrr::walk(scripts, safe_source)
 
 source("genweb.r")
