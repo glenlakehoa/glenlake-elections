@@ -14,7 +14,7 @@
         { "name": "Diana Banks", "tenure_start": "2025-02-08", "tenure_end": null},
         { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": null}
     ],
-    "comment" : "all info tentative, nothing has been decided yet on dates",
+    "comment" : "all info tentative",
     "results": 
     [
         { "name": "Eric Rice", "votes" : 0},
