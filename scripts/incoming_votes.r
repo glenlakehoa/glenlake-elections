@@ -27,8 +27,14 @@ votecount_g <-
     votes %>%
     slice_max(votesreceived, by = year) %>%
     ggplot(aes(x = year, y = votesreceived, fill = factor(year), alpha = factor(year))) +
-    geom_hline(
-        yintercept = 120, linewidth = 2,
+    # geom_hline(
+    #     yintercept = 120, linewidth = 2,
+    #     linetype = 1, alpha = .5, color = glcolors$dark
+    # ) +
+    geom_step(
+        aes(x = year - .5, y = quorum),
+        inherit.aes = FALSE,
+        linewidth = 2,
         linetype = 1, alpha = .5, color = glcolors$dark
     ) +
     geom_col(show.legend = FALSE) +
