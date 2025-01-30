@@ -11,7 +11,10 @@ mod <- votes %>%
         data = .
     )
 
-quorum_date <- round(coefficients(mod)[2], digits = 1)
+quorum_date <- with(
+    broom::augment(mod, newdata = tibble(daysuntilelection = seq(-20, 35, 1))),
+    approx(.fitted, daysuntilelection, xout = 120)
+)$y %>% round(. , digits = 1) * -1
 
 std_err <- round(broom::glance(mod)$sigma[1], digits = 2)
 
