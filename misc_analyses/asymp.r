@@ -15,15 +15,14 @@ mod <- votes %>%
 
 quorum_date <-
     with(
-        broom::augment(mod, newdata = tibble(daysuntilelection = seq(-20, 35, 1))),
+        mod_data <- broom::augment(mod, newdata = tibble(daysuntilelection = seq(-20, 35, 1))),
         approx(.fitted, daysuntilelection, xout = 120)
     )$y %>%
     round(., digits = 1) * -1
 
 std_err <- round(broom::glance(mod)$sigma[1], digits = 2)
 
-year_2025 <- mod %>%
-    broom::augment(., newdata = tibble(daysuntilelection = seq(-20, 35))) %>%
+year_2025 <- mod_data %>%
     ggplot(aes(x = daysuntilelection, y = .fitted)) +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
     # geom_point() +
@@ -57,7 +56,10 @@ year_2025 <- mod %>%
         plot.caption = element_text(hjust = 0)
     )
 
-
+ggsave("graphs/asymptotic2025.png",
+    width = 5, height = 4,
+    plot = year_2025
+)
 
 
 #
@@ -65,7 +67,7 @@ year_2025 <- mod %>%
 #
 
 all_years <-
-votes %>%
+    votes %>%
     # other years did not converge
     filter(year %in% c(2020, 2021, 2023, 2024, 2025)) %>%
     nest(data = !year) %>%
@@ -76,10 +78,10 @@ votes %>%
                 data = dat
             )
         }),
-
     ) %>%
     mutate(
-    fitpoint = map(mod, ~broom::augment(.x, newdata = tibble(daysuntilelection = seq(-20, 35))))) %>%
+        fitpoint = map(mod, ~ broom::augment(.x, newdata = tibble(daysuntilelection = seq(-20, 35))))
+    ) %>%
     unnest(fitpoint) %>%
     ggplot(aes(x = daysuntilelection, y = .fitted, group = year)) +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
@@ -115,5 +117,7 @@ votes %>%
         plot.caption = element_text(hjust = 0)
     )
 
-ggsave("graphs/asymptotic.png", width = 10, height = 8,
-    plot = all_years)
+ggsave("graphs/asymptotic.png",
+    width = 10, height = 8,
+    plot = all_years
+)
