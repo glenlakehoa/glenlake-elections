@@ -68,13 +68,12 @@ ggsave("graphs/asymptotic2025.png",
 
 all_years <-
     votes %>%
-    # other years did not converge
-    filter(year %in% c(2020, 2021, 2023, 2024, 2025)) %>%
     nest(data = !year) %>%
     mutate(
         mod = map(data, \(dat) {
             nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
                 start = list(a0 = 120, a1 = 120, a2 = -.1),
+                control = list(warnOnly = TRUE, maxiter = 1000),
                 data = dat
             )
         }),
@@ -85,7 +84,6 @@ all_years <-
     unnest(fitpoint) %>%
     ggplot(aes(x = daysuntilelection, y = .fitted, group = year)) +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
-    # geom_point() +
     scale_x_reverse(
         limits = c(35, -7),
         breaks = seq(35, -7, -7)
@@ -95,7 +93,8 @@ all_years <-
         breaks = seq(0, 160, 20)
     ) +
     geom_point(
-        data = votes %>% filter(year %in% c(2020, 2021, 2023, 2024, 2025)), aes(y = votesreceived),
+        data = votes,
+        aes(y = votesreceived),
         shape = 21
     ) +
     geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
