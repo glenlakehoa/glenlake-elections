@@ -3,8 +3,10 @@ library(tidyverse)
 theme_set(theme_light())
 load("Rdata/votes.Rdata")
 
+filter_year <- 2025
+
 mod <- votes %>%
-    filter(year == 2025) %>%
+    filter(year == filter_year) %>%
     select(daysuntilelection, votesreceived) %>%
     nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
         start = list(a0 = 120, a1 = 120, a2 = -.1),
@@ -20,7 +22,7 @@ quorum_date <-
 
 std_err <- round(broom::glance(mod)$sigma[1], digits = 2)
 
-mod %>%
+year_2025 <- mod %>%
     broom::augment(., newdata = tibble(daysuntilelection = seq(-20, 35))) %>%
     ggplot(aes(x = daysuntilelection, y = .fitted)) +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
@@ -34,7 +36,7 @@ mod %>%
         breaks = seq(0, 140, 20)
     ) +
     geom_point(
-        data = votes %>% filter(year == 2025), aes(y = votesreceived),
+        data = votes %>% filter(year == filter_year), aes(y = votesreceived),
         shape = 21
     ) +
     geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
@@ -55,4 +57,63 @@ mod %>%
         plot.caption = element_text(hjust = 0)
     )
 
-ggsave("graphs/asymptotic.png", width = 5, height = 4)
+
+
+
+#
+# apply to all years
+#
+
+all_years <-
+votes %>%
+    # other years did not converge
+    filter(year %in% c(2020, 2021, 2023, 2024, 2025)) %>%
+    nest(data = !year) %>%
+    mutate(
+        mod = map(data, \(dat) {
+            nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
+                start = list(a0 = 120, a1 = 120, a2 = -.1),
+                data = dat
+            )
+        }),
+
+    ) %>%
+    mutate(
+    fitpoint = map(mod, ~broom::augment(.x, newdata = tibble(daysuntilelection = seq(-20, 35))))) %>%
+    unnest(fitpoint) %>%
+    ggplot(aes(x = daysuntilelection, y = .fitted, group = year)) +
+    geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
+    # geom_point() +
+    scale_x_reverse(
+        limits = c(35, -7),
+        breaks = seq(35, -7, -7)
+    ) +
+    scale_y_continuous(
+        limits = c(0, 160),
+        breaks = seq(0, 160, 20)
+    ) +
+    geom_point(
+        data = votes %>% filter(year %in% c(2020, 2021, 2023, 2024, 2025)), aes(y = votesreceived),
+        shape = 21
+    ) +
+    geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
+    geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
+    labs(
+        x = "Days until the Annual Meeting",
+        y = "Votes received",
+        title = "Modeling incoming vote rate",
+        caption = "Exponential decay model"
+    ) +
+    facet_wrap(~year) +
+    theme(
+        plot.title = ggtext::element_textbox_simple(
+            size = 15, color = "gray50",
+            margin = margin(b = 10)
+        ),
+        plot.title.position = "plot",
+        plot.caption.position = "plot",
+        plot.caption = element_text(hjust = 0)
+    )
+
+ggsave("graphs/asymptotic.png", width = 10, height = 8,
+    plot = all_years)
