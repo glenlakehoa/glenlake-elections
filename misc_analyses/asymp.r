@@ -18,11 +18,14 @@ quorum_date <-
         mod_data <- broom::augment(mod, newdata = tibble(daysuntilelection = seq(-20, 35, 1))),
         approx(.fitted, daysuntilelection, xout = 120)
     )$y %>%
-    round(., digits = 1) * -1
+    round(., digits = 1)
+
+qual <- ifelse(quorum_date > 0, "before", "after")
 
 std_err <- round(broom::glance(mod)$sigma[1], digits = 2)
 
-year_2025 <- mod_data %>%
+year_2025 <-
+    mod_data %>%
     ggplot(aes(x = daysuntilelection, y = .fitted)) +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
     # geom_point() +
@@ -43,7 +46,10 @@ year_2025 <- mod_data %>%
     labs(
         x = "Days until the Annual Meeting",
         y = "Votes received",
-        title = glue::glue("At this voting rate, we'll meet quorum {quorum_date} days after the original meeting date"),
+        title = glue::glue(
+            "At this voting rate, we'll meet quorum {quorum_date} days ",
+            "{qual} the original meeting date"
+        ),
         caption = glue::glue("Exponential decay model, standard error {std_err} votes")
     ) +
     theme(
@@ -89,7 +95,7 @@ all_years <-
         breaks = seq(35, -7, -7)
     ) +
     scale_y_continuous(
-        limits = c(0, 160),
+        limits = c(0, 170),
         breaks = seq(0, 160, 20)
     ) +
     geom_point(
