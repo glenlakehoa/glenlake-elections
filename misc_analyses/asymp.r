@@ -47,7 +47,7 @@ year_2025 <-
         x = "Days until the Annual Meeting",
         y = "Votes received",
         title = glue::glue(
-            "At this voting rate, we'll meet quorum {quorum_date} days ",
+            "At this voting rate, we'll meet quorum {abs(quorum_date)} days ",
             "{qual} the original meeting date"
         ),
         caption = glue::glue("Exponential decay model, standard error {std_err} votes")
