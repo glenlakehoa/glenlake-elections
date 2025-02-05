@@ -14,7 +14,7 @@
         { "date": "2025-01-30", "votes": 106 },
         { "date": "2025-02-03", "votes": 110 },
         { "date": "2025-02-04", "votes": 113 },
-        { "date": "2025-02-05", "votes": 117 }
+        { "date": "2025-02-05", "votes": 123 }
     ],
     "board":
     [
@@ -22,7 +22,7 @@
         { "name": "Diana Banks", "tenure_start": "2025-02-08", "tenure_end": null},
         { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": null}
     ],
-    "comment" : "all info tentative",
+    "comment" : "Feb 5, 117 ballots + 6 proxies",
     "results": 
     [
         { "name": "Eric Rice", "votes" : 0},
