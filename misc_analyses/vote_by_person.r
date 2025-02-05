@@ -84,7 +84,7 @@ vote_results %>%
         labels = scales::label_percent()
     ) +
     coord_cartesian(
-        ylim = c(0, 1), 
+        ylim = c(0, 1),
         clip = "off"
     ) +
     scale_color_manual(
