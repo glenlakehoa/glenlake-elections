@@ -30,7 +30,7 @@ theme_set(
 
 glcolors <- list(green = "#295043", brown = "#D3BDA8")
 
-set.seed(2342362637)
+set.seed(23423637)
 
 vote_results %>%
     arrange(year, desc(votes)) %>%
@@ -59,7 +59,7 @@ vote_results %>%
     )
 
 
-set.seed(2342362637)
+set.seed(23423637)
 
 vote_results %>%
     arrange(year, desc(votes)) %>%
