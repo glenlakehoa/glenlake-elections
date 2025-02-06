@@ -20,7 +20,7 @@ theme_set(
     theme_light() +
         theme(
             plot.title.position = "plot",
-            plot.caption = element_text(hjust = 0),
+            plot.caption = ggtext::element_markdown(hjust = 0, size = 6),
             plot.caption.position = "plot",
             panel.grid.minor = element_blank(),
             panel.grid.major = element_blank(),
@@ -93,7 +93,12 @@ vote_results %>%
     labs(
         x = NULL,
         y = "Fraction of votes received",
-        title = "How competitive are the board elections?"
+        title = "How competitive are the board elections?",
+        caption = glue::glue(
+            "<span style = 'color: dodgerblue'>Blue</span>: elected for 2-year term;<BR>",
+            "<span style = 'color: darkgreen'>Green</span>: elected for 1-year term;<BR>",
+            "<span style = 'color: red'>Red</span>: not enough votes to be elected"
+        )
     )
 
 ggsave("misc_analyses/vote_competition.png", width = 8, height = 5)
