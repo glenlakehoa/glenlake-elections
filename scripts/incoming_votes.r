@@ -25,7 +25,7 @@ max_year <- max(year_range)
 
 votecount_g <-
     votes %>%
-    slice_max(votesreceived, by = year) %>%
+    slice_max(votesreceived, by = year, n = 1, with_ties = FALSE) %>%
     ggplot(aes(x = year, y = votesreceived, fill = factor(year), alpha = factor(year))) +
     # geom_hline(
     #     yintercept = 120, linewidth = 2,
