@@ -61,9 +61,9 @@ quorum_g <-
         qdays = map_dbl(data, \(dat) approx(dat$voteneeded, dat$daysuntilelection, xout = 0)$y)
     ) %>%
     replace_na(replace = list(qdays = -.01)) %>%
-    ggplot(aes(x = year, y = qdays, fill = factor(year), alpha = factor(year))) +
+    ggplot(aes(x = year, y = floor(qdays), fill = factor(year), alpha = factor(year))) +
     geom_col(show.legend = FALSE) +
-    geom_text(aes(y = qdays + .5, label = ceiling(qdays))) +
+    geom_text(aes(y = qdays + .5, label = floor(qdays))) +
     scale_x_continuous(
         breaks = scales::pretty_breaks()
     ) +
