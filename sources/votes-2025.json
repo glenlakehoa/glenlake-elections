@@ -15,7 +15,7 @@
         { "date": "2025-02-04", "votes": 113 },
         { "date": "2025-02-05", "votes": 125 },
         { "date": "2025-02-06", "votes": 129 },
-        { "date": "2025-02-08", "votes": 129 }
+        { "date": "2025-02-08", "votes": 125 }
     ],
     "board":
     [
@@ -23,14 +23,17 @@
         { "name": "Diana Banks", "tenure_start": "2025-02-08", "tenure_end": null},
         { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": null}
     ],
-    "comment" : "Feb 6, 123 ballots + 6 proxies",
+    "comment" : "",
     "results": 
     [
-        { "name": "Eric Rice", "votes" : 0},
-        { "name": "Amanda Goode", "votes" : 0},
-        { "name": "Keosha Haney", "votes" : 0},
-        { "name": "Diana Banks", "votes" : 0},
-        { "name": "Write-in", "votes" : 0}
+        { "name": "Eric Rice", "votes" : 108},
+        { "name": "Amanda Goode", "votes" : 24},
+        { "name": "Keosha Haney", "votes" : 91},
+        { "name": "Diana Banks", "votes" : 94},
+        { "name": "Dave Garland", "votes" : 1},
+        { "name": "Vasily Kharchenko", "votes" : 1},
+        { "name": "Radu Scutelnic", "votes" : 1}
+
     ]
 }
 
