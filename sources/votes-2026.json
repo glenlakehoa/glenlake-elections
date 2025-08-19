@@ -1,0 +1,27 @@
+{ "year": 2026,
+  "numberofhomes": 482,
+  "meetingdate": "2026-02-07",
+  "seats" : 4,
+  "votes": 
+    [
+        { "date": "2026-01-08", "votes": 15 },
+        { "date": "2026-01-20", "votes": 120 },
+        { "date": "2026-02-07", "votes": 146 }
+    ],
+    "board":
+    [
+        { "name": "Name 1", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Name 2", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Name 3", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Name 4", "tenure_start": "2026-02-07", "tenure_end": null}
+    ],
+    "comment" : "",
+    "results": 
+    [
+        { "name": "Name 1", "votes" : 108},
+        { "name": "Name 2", "votes" : 24},
+        { "name": "Name 3", "votes" : 91},
+        { "name": "Name 4", "votes" : 94}
+    ]
+}
+
