@@ -78,6 +78,9 @@ vote_results %>%
     ggplot(aes(x = year, y = votes / votesreceived, color = elected)) +
     geom_vline(xintercept = seq(2017.5, 2025.5, 1), , alpha = .25, linewidth = 2, color = "gray60") +
     geom_jitter(size = 5, alpha = .4, width = .35, show.legend = FALSE) +
+    scale_x_continuous(
+        breaks = scales::pretty_breaks()
+    ) +
     scale_y_continuous(
         # limit = c(0, 1),
         breaks = seq(0, 1, .2),

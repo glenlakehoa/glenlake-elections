@@ -10,18 +10,23 @@
     ],
     "board":
     [
-        { "name": "Name 1", "tenure_start": "2026-02-07", "tenure_end": null},
-        { "name": "Name 2", "tenure_start": "2026-02-07", "tenure_end": null},
-        { "name": "Name 3", "tenure_start": "2026-02-07", "tenure_end": null},
-        { "name": "Name 4", "tenure_start": "2026-02-07", "tenure_end": null}
+        { "name": "Ed McDuffie", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Marge Halley", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Don Cole", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Dave Garner", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Kimberly Shorter", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Eric DeLisle", "tenure_start": "2026-02-07", "tenure_end": null}
+
     ],
     "comment" : "",
     "results": 
     [
-        { "name": "Name 1", "votes" : 108},
-        { "name": "Name 2", "votes" : 24},
-        { "name": "Name 3", "votes" : 91},
-        { "name": "Name 4", "votes" : 94}
+        { "name": "Don Cole", "votes" : 1},
+        { "name": "Ed McDuffie", "votes" : 1},
+        { "name": "Eric DeLisle", "votes" : 1},
+        { "name": "Kimberly Shorter", "votes" : 1},
+        { "name": "Dave Garner", "votes" : 1},
+        { "name": "Marge Halley", "votes" : 1}
     ]
 }
 
