@@ -12,7 +12,7 @@
     [
         { "name": "Ed McDuffie", "tenure_start": "2026-02-07", "tenure_end": null},
         { "name": "Marge Halley", "tenure_start": "2026-02-07", "tenure_end": null},
-        { "name": "Don Cole", "tenure_start": "2026-02-07", "tenure_end": null},
+        { "name": "Jeff McGraw", "tenure_start": "2026-02-07", "tenure_end": null},
         { "name": "Dave Garner", "tenure_start": "2026-02-07", "tenure_end": null},
         { "name": "Kimberly Shorter", "tenure_start": "2026-02-07", "tenure_end": null},
         { "name": "Eric DeLisle", "tenure_start": "2026-02-07", "tenure_end": null}
@@ -21,7 +21,7 @@
     "comment" : "",
     "results": 
     [
-        { "name": "Don Cole", "votes" : 1},
+        { "name": "Jeff McGraw", "votes" : 1},
         { "name": "Ed McDuffie", "votes" : 1},
         { "name": "Eric DeLisle", "votes" : 1},
         { "name": "Kimberly Shorter", "votes" : 1},
