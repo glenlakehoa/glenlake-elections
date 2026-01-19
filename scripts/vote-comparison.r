@@ -41,6 +41,16 @@ label_data <-
     tibble(
         daysuntilelection = high_votes$daysuntilelection, votesreceived = ranked, year = year_range,
         labels = rank(-ranked)
+    ) %>%
+    mutate(
+        label = case_when(
+            labels %in% 1:3 ~ paste0(year, ": ", labels),
+            TRUE ~ as.character(labels)
+        ),
+        hjust = case_when(
+            labels %in% 1:3 ~ 1,
+            TRUE ~ 0.5
+        )
     )
 
 comp_g <-
@@ -82,7 +92,7 @@ comp_g_rank <-
         show.legend = FALSE
     ) +
     geom_text(
-        data = label_data, aes(label = labels),
+        data = label_data, aes(label = label, hjust = I(hjust)),
         color = I(text_colors), size = 2, alpha = 1,
         show.legend = FALSE
     )
