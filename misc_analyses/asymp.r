@@ -3,13 +3,14 @@ library(tidyverse)
 theme_set(theme_light())
 load("Rdata/votes.Rdata")
 
-filter_year <- 2025
+filter_year <- 2026
 
 mod <- votes %>%
     filter(year == filter_year) %>%
     select(daysuntilelection, votesreceived) %>%
-    nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
-        start = list(a0 = 120, a1 = 120, a2 = -.1),
+    # nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
+    nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
+        start = list(a0 = 23, a1 = 31),
         data = .
     )
 
@@ -77,8 +78,10 @@ all_years <-
     nest(data = !year) %>%
     mutate(
         mod = map(data, \(dat) {
-            nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
-                start = list(a0 = 120, a1 = 120, a2 = -.1),
+            # nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
+            nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
+                # start = list(a0 = 120, a1 = 120, a2 = -.1),
+                start = list(a0 = 23, a1 = 31),
                 control = list(warnOnly = TRUE, maxiter = 1000),
                 data = dat
             )
