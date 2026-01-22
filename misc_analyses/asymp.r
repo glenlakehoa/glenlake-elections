@@ -9,8 +9,9 @@ mod <- votes %>%
     filter(year == filter_year) %>%
     select(daysuntilelection, votesreceived) %>%
     # nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
-    nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
-        start = list(a0 = 23, a1 = 31),
+    # nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
+    nls(votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2),
+        start = list(a0 = 23, a1 = 31, a2 = 0.5),
         data = .
     )
 
@@ -24,6 +25,10 @@ quorum_date <-
 qual <- ifelse(quorum_date > 0, "before", "after")
 
 std_err <- round(broom::glance(mod)$sigma[1], digits = 2)
+final_vote <-
+    broom::augment(mod,
+        newdata = tibble(daysuntilelection = 0)
+    )$.fitted %>% round(digits = 0)
 
 year_2025 <-
     mod_data %>%
@@ -51,7 +56,8 @@ year_2025 <-
             "At this voting rate, we'll meet quorum {abs(quorum_date)} days ",
             "{qual} the original meeting date"
         ),
-        caption = glue::glue("Exponential decay model, standard error {std_err} votes")
+        subtitle = glue::glue("Expected votes: {final_vote}"),
+        caption = glue::glue("polynomial decay model, standard error {std_err} votes")
     ) +
     theme(
         plot.title = ggtext::element_textbox_simple(
@@ -79,9 +85,10 @@ all_years <-
     mutate(
         mod = map(data, \(dat) {
             # nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
-            nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
+            # nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
+            nls(votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2),
                 # start = list(a0 = 120, a1 = 120, a2 = -.1),
-                start = list(a0 = 23, a1 = 31),
+                start = list(a0 = 23, a1 = 31, a2 = 0.5),
                 control = list(warnOnly = TRUE, maxiter = 1000),
                 data = dat
             )
@@ -112,7 +119,7 @@ all_years <-
         x = "Days until the Annual Meeting",
         y = "Votes received",
         title = "Modeling incoming vote rate",
-        caption = "Exponential decay model"
+        caption = "Polynomial decay model"
     ) +
     facet_wrap(~year) +
     theme(
