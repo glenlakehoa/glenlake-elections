@@ -3,27 +3,22 @@ library(tidyverse)
 theme_set(theme_light())
 load("Rdata/votes.Rdata")
 
-
-
-#
-# apply to all years
-#
-
 year_mods <-
     votes %>%
     nest(data = !year) %>%
     mutate(
         mod = map(data, \(dat) {
-            # nls(votesreceived ~ a0 - a1 * exp(-a2 * daysuntilelection),
-            # nls(votesreceived ~ a0 * sqrt(abs(a1 - daysuntilelection)),
             nls(votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2),
-                # start = list(a0 = 120, a1 = 120, a2 = -.1),
                 start = list(a0 = 23, a1 = 31, a2 = 0.5),
                 control = list(warnOnly = TRUE, maxiter = 1000),
                 data = dat
             )
         }),
-    )
+        converged = map_lgl(mod, \(m) pluck(m, "convInfo", "isConv")),
+    ) %>%
+    filter(converged)
+
+print_model <- paste("Polynomial Decay Model: <I>votesreceived ~ a<sub>0</sub> \U007C a<sub>1</sub> - daysuntilelection \U007C<sup>a<sub>2</sub></sup></I>")
 
 year_mod_preds <-
     year_mods %>%
@@ -37,7 +32,7 @@ year_mod_preds <-
         })
     ) %>%
     unnest_wider(final_vote, names_sep = "_") %>%
-    select(year, starts_with("final_vote")) %>% 
+    select(year, starts_with("final_vote")) %>%
     replace_na(list(final_vote_1 = 0, final_vote_2 = 0, final_vote_3 = 0))
 
 all_years <-
@@ -90,7 +85,7 @@ all_years <-
         x = "Days until the Annual Meeting",
         y = "Votes received",
         title = "Modeling incoming vote rate",
-        caption = "Polynomial decay model"
+        caption = glue::glue("{print_model}")
     ) +
     facet_wrap(~year) +
     theme(
@@ -100,7 +95,7 @@ all_years <-
         ),
         plot.title.position = "plot",
         plot.caption.position = "plot",
-        plot.caption = element_text(hjust = 0)
+        plot.caption = ggtext::element_markdown(hjust = 0)
     )
 
 ggsave("graphs/asymptotic.png",
@@ -117,13 +112,9 @@ mod_filter_year <- year_mods %>%
     pull(mod) %>%
     .[[1]]
 
-params <- broom::tidy(mod_filter_year) %>% 
-    pull(estimate) %>% 
+params <- broom::tidy(mod_filter_year) %>%
+    pull(estimate) %>%
     round(., digits = 3)
-
-print_params <- paste("Model parameters:", paste(c("a0", "a1", "a2"), "=", params, collapse = ", "))
-print_model <- paste("Polynomial Decay Model: votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2)")
-
 
 
 quorum_date <-
@@ -133,10 +124,19 @@ quorum_date <-
             mod_filter_year,
             newdata = tibble(daysuntilelection = seq(-20, 35, 1)),
             interval = "confidence"
-        ) %>% as_tibble() %>% mutate(daysuntilelection = seq(-20, 35, 1)),
+        ) %>%
+            as_tibble() %>%
+            mutate(daysuntilelection = seq(-20, 35, 1)),
         approx(fit, daysuntilelection, xout = 120)
     )$y %>%
     round(., digits = 1)
+
+rsq <-
+    lm(fit ~ daysuntilelection,
+        data = mod_data %>% inner_join(votes %>% filter(year == filter_year), by = "daysuntilelection")
+    ) %>%
+    summary(.) %>%
+    .[["r.squared"]]
 
 qual <- ifelse(quorum_date > 0, "before", "after")
 
@@ -152,9 +152,19 @@ err_range <- glue::glue(
 final_vote <-
     round(err_bar$fit, digits = 0)
 
+print_params <- paste0(
+    "Model parameters: ",
+    paste(c("a<sub>0</sub>", "a<sub>1</sub>", "a<sub>2</sub>"),
+        "=",
+        params,
+        collapse = ", "
+    ),
+    "; R<sup>2</sup> = ", round(rsq, 3)
+)
+
 year_filtered <-
     mod_data %>%
-    ggplot(aes(x = daysuntilelection, y =  fit)) +
+    ggplot(aes(x = daysuntilelection, y = fit)) +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
     scale_x_reverse(
         limits = c(35, -7),
@@ -178,7 +188,7 @@ year_filtered <-
             "{qual} the original meeting date"
         ),
         subtitle = glue::glue("Expected votes: {final_vote} {err_range}"),
-        caption = glue::glue("{print_model}\n{print_params}")
+        caption = glue::glue("{print_model}<BR/><BR/>{print_params}")
     ) +
     theme(
         plot.title = ggtext::element_textbox_simple(
@@ -191,10 +201,10 @@ year_filtered <-
         ),
         plot.title.position = "plot",
         plot.caption.position = "plot",
-        plot.caption = element_text(hjust = 0)
+        plot.caption = ggtext::element_markdown(hjust = 0)
     )
 
 ggsave(paste0("graphs/asymptotic", filter_year, ".png"),
-    width = 6, height = 4,
+    width = 6, height = 5,
     plot = year_filtered
 )
