@@ -20,6 +20,24 @@ year_mods <-
 
 print_model <- paste("Polynomial Decay Model: <I>votesreceived ~ a<sub>0</sub> \U007C a<sub>1</sub> - daysuntilelection \U007C<sup>a<sub>2</sub></sup></I>")
 
+# extract parameters from year_mods
+year_mod_params <-
+    year_mods %>%
+    mutate(
+        params = map(mod, ~ broom::tidy(.x) %>% select(term, estimate))
+    ) %>%
+    unnest(params) %>%
+    pivot_wider(names_from = term, values_from = estimate) %>%
+    select(year, a0, a1, a2) %>%
+    # make a variable label for a text label containing the model parameters
+    mutate(
+        param_label = paste0(
+            "a<sub>0</sub> = ", format(round(a0, 2), nsmall = 2), "<BR/>",
+            "a<sub>1</sub> = ", format(round(a1, 2), nsmall = 2), "<BR/>",
+            "a<sub>2</sub> = ", format(round(a2, 2), nsmall = 2)
+        )
+    )
+
 year_mod_preds <-
     year_mods %>%
     mutate(
@@ -42,6 +60,7 @@ all_years <-
     ) %>%
     unnest(fitpoint) %>%
     ggplot(aes(x = daysuntilelection, y = .fitted, group = year)) +
+    coord_cartesian(clip = "off") +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
     scale_x_reverse(
         limits = c(35, -7),
@@ -60,12 +79,27 @@ all_years <-
         data = year_mod_preds,
         aes(
             x = 0,
-            y = final_vote_1 + 5,
+            y = final_vote_1 + 10,
             label = paste0("Expected votes: ", round(final_vote_1, 0))
         ),
         color = "gray50",
         size = 3,
         hjust = 1.1
+    ) +
+    # add a geom_text for the model parameters
+    ggtext::geom_richtext(
+        data = year_mod_params,
+        aes(
+            x = 11,
+            y = 30,
+            label = param_label
+        ),
+        color = "gray50",
+        size = 3,
+        hjust = 0,
+            fill = NA, label.color = NA,
+    # remove label padding, since we have removed the label outline
+    label.padding = grid::unit(rep(0, 4), "pt") 
     ) +
     geom_errorbar(
         data = year_mod_preds,
@@ -80,7 +114,6 @@ all_years <-
     ) +
     geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
     geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
-    coord_cartesian(clip = "off") +
     labs(
         x = "Days until the Annual Meeting",
         y = "Votes received",
@@ -103,7 +136,10 @@ ggsave("graphs/asymptotic.png",
     plot = all_years
 )
 
-
+#
+# Generate plot for a specific year
+#
+#
 
 filter_year <- 2026
 
@@ -119,7 +155,6 @@ params <- broom::tidy(mod_filter_year) %>%
 
 quorum_date <-
     with(
-        # mod_data <- broom::augment(mod_filter_year, newdata = tibble(daysuntilelection = seq(-20, 35, 1))),
         mod_data <- investr::predFit(
             mod_filter_year,
             newdata = tibble(daysuntilelection = seq(-20, 35, 1)),
@@ -140,7 +175,6 @@ rsq <-
 
 qual <- ifelse(quorum_date > 0, "before", "after")
 
-# std_err <- round(broom::glance(mod_filter_year)$sigma[1], digits = 2)
 err_bar <- mod_data %>%
     filter(daysuntilelection == 0)
 
