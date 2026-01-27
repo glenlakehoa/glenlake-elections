@@ -56,7 +56,7 @@ year_mod_preds <-
 all_years <-
     year_mods %>%
     mutate(
-        fitpoint = map(mod, ~ broom::augment(.x, newdata = tibble(daysuntilelection = seq(-20, 35))))
+        fitpoint = map(mod, ~ broom::augment(.x, newdata = tibble(daysuntilelection = seq(-7, 31))))
     ) %>%
     unnest(fitpoint) %>%
     ggplot(aes(x = daysuntilelection, y = .fitted, group = year)) +
@@ -157,11 +157,11 @@ generate_year_plot <- function(year_mods, filter_year = year(today())) {
         with(
             mod_data <- investr::predFit(
                 mod_filter_year,
-                newdata = tibble(daysuntilelection = seq(-20, 35, 1)),
+                newdata = tibble(daysuntilelection = seq(-20, 30, 1)),
                 interval = "confidence"
             ) %>%
                 as_tibble() %>%
-                mutate(daysuntilelection = seq(-20, 35, 1)),
+                mutate(daysuntilelection = seq(-20, 30, 1)),
             approx(fit, daysuntilelection, xout = 120)
         )$y %>%
         round(., digits = 1)
