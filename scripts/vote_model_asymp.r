@@ -97,9 +97,9 @@ all_years <-
         color = "gray50",
         size = 3,
         hjust = 0,
-            fill = NA, label.color = NA,
-    # remove label padding, since we have removed the label outline
-    label.padding = grid::unit(rep(0, 4), "pt") 
+        fill = NA, label.color = NA,
+        # remove label padding, since we have removed the label outline
+        label.padding = grid::unit(rep(0, 4), "pt")
     ) +
     geom_errorbar(
         data = year_mod_preds,
@@ -142,104 +142,111 @@ ggsave("graphs/vote_model_pred.png",
 #
 #
 
-filter_year <- 2026
+generate_year_plot <- function(year_mods, filter_year = year(today())) {
+    mod_filter_year <- year_mods %>%
+        filter(year == filter_year) %>%
+        pull(mod) %>%
+        .[[1]]
 
-mod_filter_year <- year_mods %>%
-    filter(year == filter_year) %>%
-    pull(mod) %>%
-    .[[1]]
-
-params <- broom::tidy(mod_filter_year) %>%
-    pull(estimate) %>%
-    round(., digits = 3)
+    params <- broom::tidy(mod_filter_year) %>%
+        pull(estimate) %>%
+        round(., digits = 3)
 
 
-quorum_date <-
-    with(
-        mod_data <- investr::predFit(
-            mod_filter_year,
-            newdata = tibble(daysuntilelection = seq(-20, 35, 1)),
-            interval = "confidence"
+    quorum_date <-
+        with(
+            mod_data <- investr::predFit(
+                mod_filter_year,
+                newdata = tibble(daysuntilelection = seq(-20, 35, 1)),
+                interval = "confidence"
+            ) %>%
+                as_tibble() %>%
+                mutate(daysuntilelection = seq(-20, 35, 1)),
+            approx(fit, daysuntilelection, xout = 120)
+        )$y %>%
+        round(., digits = 1)
+
+    rsq <-
+        lm(fit ~ daysuntilelection,
+            data = mod_data %>% inner_join(votes %>% filter(year == filter_year), by = "daysuntilelection")
         ) %>%
-            as_tibble() %>%
-            mutate(daysuntilelection = seq(-20, 35, 1)),
-        approx(fit, daysuntilelection, xout = 120)
-    )$y %>%
-    round(., digits = 1)
+        summary(.) %>%
+        .[["r.squared"]]
 
-rsq <-
-    lm(fit ~ daysuntilelection,
-        data = mod_data %>% inner_join(votes %>% filter(year == filter_year), by = "daysuntilelection")
-    ) %>%
-    summary(.) %>%
-    .[["r.squared"]]
+    qual <- ifelse(quorum_date > 0, "before", "after")
 
-qual <- ifelse(quorum_date > 0, "before", "after")
+    err_bar <- mod_data %>%
+        filter(daysuntilelection == 0)
 
-err_bar <- mod_data %>%
-    filter(daysuntilelection == 0)
-
-err_range <- glue::glue(
-    "({round(err_bar$lwr, digits = 0)} - ",
-    "{round(err_bar$upr, digits = 0)})"
-)
-
-final_vote <-
-    round(err_bar$fit, digits = 0)
-
-print_params <- paste0(
-    "Model parameters: ",
-    paste(c("a<sub>0</sub>", "a<sub>1</sub>", "a<sub>2</sub>"),
-        "=",
-        params,
-        collapse = ", "
-    ),
-    "; R<sup>2</sup> = ", round(rsq, 3)
-)
-
-year_filtered <-
-    mod_data %>%
-    ggplot(aes(x = daysuntilelection, y = fit)) +
-    geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
-    scale_x_reverse(
-        limits = c(35, -7),
-        breaks = seq(35, -7, -7)
-    ) +
-    scale_y_continuous(
-        limits = c(0, 140),
-        breaks = seq(0, 140, 20)
-    ) +
-    geom_point(
-        data = votes %>% filter(year == filter_year), aes(y = votesreceived),
-        shape = 21
-    ) +
-    geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
-    geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
-    labs(
-        x = "Days until the Annual Meeting",
-        y = "Votes received",
-        title = glue::glue(
-            "At this voting rate, we'll meet quorum {abs(quorum_date)} days ",
-            "{qual} the original meeting date"
-        ),
-        subtitle = glue::glue("Expected votes: {final_vote} {err_range}"),
-        caption = glue::glue("{print_model}<BR/><BR/>{print_params}")
-    ) +
-    theme(
-        plot.title = ggtext::element_textbox_simple(
-            size = 12, color = "gray50",
-            margin = margin(b = 3)
-        ),
-        plot.subtitle = ggtext::element_textbox_simple(
-            size = 10, color = "gray50",
-            margin = margin(b = 3)
-        ),
-        plot.title.position = "plot",
-        plot.caption.position = "plot",
-        plot.caption = ggtext::element_markdown(hjust = 0)
+    err_range <- glue::glue(
+        "({round(err_bar$lwr, digits = 0)} - ",
+        "{round(err_bar$upr, digits = 0)})"
     )
 
-ggsave(paste0("graphs/vote_model_pred_", filter_year, ".png"),
-    width = 6, height = 5,
-    plot = year_filtered
-)
+    final_vote <-
+        round(err_bar$fit, digits = 0)
+
+    print_params <- paste0(
+        "Model parameters: ",
+        paste(c("a<sub>0</sub>", "a<sub>1</sub>", "a<sub>2</sub>"),
+            "=",
+            params,
+            collapse = ", "
+        ),
+        "; R<sup>2</sup> = ", round(rsq, 3)
+    )
+
+    year_filtered <-
+        mod_data %>%
+        filter(daysuntilelection > -7) %>%
+        ggplot(aes(x = daysuntilelection, y = fit)) +
+        geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
+        scale_x_reverse(
+            limits = c(35, -7),
+            breaks = seq(35, -7, -7)
+        ) +
+        scale_y_continuous(
+            limits = c(0, NA),
+            breaks = seq(0, 240, 20)
+        ) +
+        geom_point(
+            data = votes %>% filter(year == filter_year), aes(y = votesreceived),
+            shape = 21
+        ) +
+        geom_errorbar(
+            data = mod_data %>% filter(daysuntilelection == 0),
+            aes(ymin = lwr, ymax = upr), width = 2, linewidth = 0.5, color = "gray50"
+        ) + 
+        geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
+        geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
+        labs(
+            x = "Days until the Annual Meeting",
+            y = "Votes received",
+            title = glue::glue(
+                "At this voting rate, we'll meet quorum {abs(quorum_date)} days ",
+                "{qual} the original meeting date"
+            ),
+            subtitle = glue::glue("Expected votes: {final_vote} {err_range}"),
+            caption = glue::glue("{print_model}<BR/><BR/>{print_params}")
+        ) +
+        theme(
+            plot.title = ggtext::element_textbox_simple(
+                size = 12, color = "gray50",
+                margin = margin(b = 3)
+            ),
+            plot.subtitle = ggtext::element_textbox_simple(
+                size = 10, color = "gray50",
+                margin = margin(b = 3)
+            ),
+            plot.title.position = "plot",
+            plot.caption.position = "plot",
+            plot.caption = ggtext::element_markdown(hjust = 0)
+        )
+
+    ggsave(paste0("graphs/year_pred/vote_model_pred_", filter_year, ".png"),
+        width = 6.5, height = 5,
+        plot = year_filtered
+    )
+}
+
+purrr::walk(year_mods$year, \(y) generate_year_plot(year_mods, y))
