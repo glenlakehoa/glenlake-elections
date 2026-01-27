@@ -110,6 +110,7 @@ all_years <-
             ymax = final_vote_3
         ),
         width = 2,
+        linewidth = 0.5,
         color = "gray50"
     ) +
     geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
@@ -131,7 +132,7 @@ all_years <-
         plot.caption = ggtext::element_markdown(hjust = 0)
     )
 
-ggsave("graphs/asymptotic.png",
+ggsave("graphs/vote_model_pred.png",
     width = 10, height = 8,
     plot = all_years
 )
@@ -238,7 +239,7 @@ year_filtered <-
         plot.caption = ggtext::element_markdown(hjust = 0)
     )
 
-ggsave(paste0("graphs/asymptotic", filter_year, ".png"),
+ggsave(paste0("graphs/vote_model_pred_", filter_year, ".png"),
     width = 6, height = 5,
     plot = year_filtered
 )
