@@ -67,8 +67,8 @@ all_years <-
         breaks = seq(35, -7, -7)
     ) +
     scale_y_continuous(
-        limits = c(0, 180),
-        breaks = seq(0, 160, 20)
+        # limits = c(0, 180),
+        breaks = seq(0, 480, 20)
     ) +
     geom_point(
         data = votes,
@@ -121,7 +121,7 @@ all_years <-
         title = "Modeling incoming vote rate",
         caption = glue::glue("{print_model}")
     ) +
-    facet_wrap(~year) +
+    facet_wrap(~year, scales = "free_y") +
     theme(
         plot.title = ggtext::element_textbox_simple(
             size = 15, color = "gray50",
@@ -207,7 +207,7 @@ generate_year_plot <- function(year_mods, all_votes = votes, filter_year = year(
         ) +
         scale_y_continuous(
             limits = c(0, NA),
-            breaks = seq(0, 240, 20)
+            breaks = seq(0, 480, 20)
         ) +
         geom_point(
             data = all_votes %>% filter(year == filter_year), aes(y = votesreceived),
