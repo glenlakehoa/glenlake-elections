@@ -142,7 +142,7 @@ ggsave("graphs/vote_model_pred.png",
 #
 #
 
-generate_year_plot <- function(year_mods, filter_year = year(today())) {
+generate_year_plot <- function(year_mods, all_votes = votes, filter_year = year(today())) {
     mod_filter_year <- year_mods %>%
         filter(year == filter_year) %>%
         pull(mod) %>%
@@ -168,7 +168,7 @@ generate_year_plot <- function(year_mods, filter_year = year(today())) {
 
     rsq <-
         lm(fit ~ daysuntilelection,
-            data = mod_data %>% inner_join(votes %>% filter(year == filter_year), by = "daysuntilelection")
+            data = mod_data %>% inner_join(all_votes %>% filter(year == filter_year), by = "daysuntilelection")
         ) %>%
         summary(.) %>%
         .[["r.squared"]]
@@ -210,12 +210,12 @@ generate_year_plot <- function(year_mods, filter_year = year(today())) {
             breaks = seq(0, 240, 20)
         ) +
         geom_point(
-            data = votes %>% filter(year == filter_year), aes(y = votesreceived),
+            data = all_votes %>% filter(year == filter_year), aes(y = votesreceived),
             shape = 21
         ) +
         geom_errorbar(
             data = mod_data %>% filter(daysuntilelection == 0),
-            aes(ymin = lwr, ymax = upr), width = 2, linewidth = 0.5, color = "gray50"
+            aes(ymin = lwr, ymax = upr), width = 1, linewidth = 0.5, color = "gray50"
         ) + 
         geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
         geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
@@ -249,4 +249,4 @@ generate_year_plot <- function(year_mods, filter_year = year(today())) {
     )
 }
 
-purrr::walk(year_mods$year, \(y) generate_year_plot(year_mods, y))
+purrr::walk(year_mods$year, \(y) generate_year_plot(year_mods, votes, y))
