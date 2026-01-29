@@ -3,63 +3,78 @@ library(tidyverse)
 theme_set(theme_light())
 load("Rdata/votes.Rdata")
 
+
+print_model <- paste0(
+    "Polynomial Decay Model: <I>votesreceived ~ a<sub>0</sub>",
+    " \U007C a<sub>1</sub> - daysuntilelection",
+    " \U007C<sup>a<sub>2</sub></sup></I>"
+)
+
+model_votes <- function(dat) {
+    nls(votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2),
+        start = list(a0 = 23, a1 = 31, a2 = 0.5),
+        control = list(warnOnly = TRUE, maxiter = 1000),
+        data = dat
+    )
+}
+
+calc_rsq <- function(mod) {
+    pred <- broom::augment(mod)
+    lmod <- lm(.fitted ~ votesreceived, data = pred)
+    return(summary(lmod)$r.squared)
+}
+
+extract_params <- function(mod) {
+    all_params <- broom::tidy(mod) %>% select(term, estimate)
+    all_params$estimate %>% set_names(all_params$term)
+}
+
+param_comment <- function(params, rsq) {
+    paste0(
+        "a<sub>0</sub> = ", format(round(params["a0"], 2), nsmall = 2), "<BR/>",
+        "a<sub>1</sub> = ", format(round(params["a1"], 2), nsmall = 2), "<BR/>",
+        "a<sub>2</sub> = ", format(round(params["a2"], 2), nsmall = 2), "<BR/>",
+        "r<sup>2</sup> = ", format(round(rsq, 3), nsmall = 2)
+    )
+}
+
+predict_votes <- function(mod, day_range = seq(-20, 35, 1)) {
+    as_tibble(
+        investr::predFit(mod,
+            newdata = tibble(daysuntilelection = day_range),
+            interval = "prediction"
+        )
+    ) %>% mutate(daysuntilelection = day_range)
+}
+
+day_zero_votes <- function(dat) {
+    dat %>%
+        filter(daysuntilelection == 0) %>%
+        mutate(expected_comment = glue::glue("Expected votes: {round(fit, 0)}"))
+}
+
+
 year_mods <-
     votes %>%
     nest(data = !year) %>%
     mutate(
-        mod = map(data, \(dat) {
-            nls(votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2),
-                start = list(a0 = 23, a1 = 31, a2 = 0.5),
-                control = list(warnOnly = TRUE, maxiter = 1000),
-                data = dat
-            )
-        }),
-        converged = map_lgl(mod, \(m) pluck(m, "convInfo", "isConv")),
+        mod = map(data, model_votes),
+        converged = map_lgl(mod, \(m) pluck(m, "convInfo", "isConv"))
     ) %>%
-    filter(converged)
-
-print_model <- paste("Polynomial Decay Model: <I>votesreceived ~ a<sub>0</sub> \U007C a<sub>1</sub> - daysuntilelection \U007C<sup>a<sub>2</sub></sup></I>")
-
-# extract parameters from year_mods
-year_mod_params <-
-    year_mods %>%
+    filter(converged) %>%
     mutate(
-        params = map(mod, ~ broom::tidy(.x) %>% select(term, estimate))
-    ) %>%
-    unnest(params) %>%
-    pivot_wider(names_from = term, values_from = estimate) %>%
-    select(year, a0, a1, a2) %>%
-    # make a variable label for a text label containing the model parameters
-    mutate(
-        param_label = paste0(
-            "a<sub>0</sub> = ", format(round(a0, 2), nsmall = 2), "<BR/>",
-            "a<sub>1</sub> = ", format(round(a1, 2), nsmall = 2), "<BR/>",
-            "a<sub>2</sub> = ", format(round(a2, 2), nsmall = 2)
-        )
+        rsq = map_dbl(mod, calc_rsq),
+        params = map(mod, extract_params),
+        param_comment = map2_chr(params, rsq, param_comment),
+        pred_votes = map(mod, predict_votes),
+        expected_comment = map(pred_votes, day_zero_votes)
     )
-
-year_mod_preds <-
-    year_mods %>%
-    mutate(
-        final_vote = map(mod, ~ {
-            investr::predFit(
-                .x,
-                newdata = tibble(daysuntilelection = 0), interval = "prediction"
-            ) %>%
-                as.numeric()
-        })
-    ) %>%
-    unnest_wider(final_vote, names_sep = "_") %>%
-    select(year, starts_with("final_vote")) %>%
-    replace_na(list(final_vote_1 = 0, final_vote_2 = 0, final_vote_3 = 0))
 
 all_years <-
     year_mods %>%
-    mutate(
-        fitpoint = map(mod, ~ broom::augment(.x, newdata = tibble(daysuntilelection = seq(-7, 31))))
-    ) %>%
-    unnest(fitpoint) %>%
-    ggplot(aes(x = daysuntilelection, y = .fitted, group = year)) +
+    unnest(pred_votes) %>%
+    filter(daysuntilelection >= -7) %>%
+    ggplot(aes(x = daysuntilelection, y = fit, group = year)) +
     coord_cartesian(clip = "off") +
     geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
     scale_x_reverse(
@@ -67,7 +82,7 @@ all_years <-
         breaks = seq(35, -7, -7)
     ) +
     scale_y_continuous(
-        # limits = c(0, 180),
+        limits = c(0, NA),
         breaks = seq(0, 480, 20)
     ) +
     geom_point(
@@ -76,38 +91,36 @@ all_years <-
         shape = 21
     ) +
     geom_text(
-        data = year_mod_preds,
+        data = year_mods %>% unnest_wider(expected_comment),
         aes(
             x = 0,
-            y = final_vote_1 + 10,
-            label = paste0("Expected votes: ", round(final_vote_1, 0))
+            y = fit + 10,
+            label = expected_comment
         ),
         color = "gray50",
         size = 3,
         hjust = 1.1
     ) +
-    # add a geom_text for the model parameters
     ggtext::geom_richtext(
-        data = year_mod_params,
+        # data = year_mod_params,
         aes(
             x = 11,
             y = 30,
-            label = param_label
+            label = param_comment
         ),
         color = "gray50",
         size = 3,
         hjust = 0,
         fill = NA, label.color = NA,
-        # remove label padding, since we have removed the label outline
         label.padding = grid::unit(rep(0, 4), "pt")
     ) +
     geom_errorbar(
-        data = year_mod_preds,
+        data = year_mods %>% unnest_wider(expected_comment),
         aes(
             x = 0,
-            y = final_vote_1,
-            ymin = final_vote_2,
-            ymax = final_vote_3
+            y = fit,
+            ymin = lwr,
+            ymax = upr
         ),
         width = 2,
         linewidth = 0.5,
@@ -138,67 +151,41 @@ ggsave("graphs/vote_model_pred.png",
 )
 
 #
-# Generate plot for a specific year
+# Generate individual plots for a each year
 #
 #
 
-generate_year_plot <- function(year_mods, all_votes = votes, filter_year = year(today())) {
-    mod_filter_year <- year_mods %>%
-        filter(year == filter_year) %>%
-        pull(mod) %>%
-        .[[1]]
+generate_year_plot <- function(year_mod, all_votes = votes) {
+    mod_data <- year_mod$pred_votes[[1]]
 
-    params <- broom::tidy(mod_filter_year) %>%
-        pull(estimate) %>%
-        round(., digits = 3)
+    filter_year <- year_mod$year
 
+    print_params <- str_replace_all(year_mod$param_comment, "<BR/>", ", ")
 
     quorum_date <-
-        with(
-            mod_data <- investr::predFit(
-                mod_filter_year,
-                newdata = tibble(daysuntilelection = seq(-20, 30, 1)),
-                interval = "confidence"
-            ) %>%
-                as_tibble() %>%
-                mutate(daysuntilelection = seq(-20, 30, 1)),
-            approx(fit, daysuntilelection, xout = 120)
-        )$y %>%
+        approx(mod_data$fit, mod_data$daysuntilelection, xout = 120)$y %>%
         round(., digits = 1)
-
-    rsq <-
-        lm(fit ~ daysuntilelection,
-            data = mod_data %>% inner_join(all_votes %>% filter(year == filter_year), by = "daysuntilelection")
-        ) %>%
-        summary(.) %>%
-        .[["r.squared"]]
 
     qual <- ifelse(quorum_date > 0, "before", "after")
 
     err_bar <- mod_data %>%
         filter(daysuntilelection == 0)
 
-    err_range <- glue::glue(
-        "({round(err_bar$lwr, digits = 0)} - ",
-        "{round(err_bar$upr, digits = 0)})"
-    )
+    err_range <-
+        with(
+            year_mod$expected_comment[[1]],
+            glue::glue(
+                "({round(lwr, digits = 0)} - ",
+                "{round(upr, digits = 0)})"
+            )
+        )
 
     final_vote <-
-        round(err_bar$fit, digits = 0)
-
-    print_params <- paste0(
-        "Model parameters: ",
-        paste(c("a<sub>0</sub>", "a<sub>1</sub>", "a<sub>2</sub>"),
-            "=",
-            params,
-            collapse = ", "
-        ),
-        "; R<sup>2</sup> = ", round(rsq, 3)
-    )
+        round(year_mod$expected_comment[[1]]$fit, digits = 0)
 
     year_filtered <-
         mod_data %>%
-        filter(daysuntilelection > -7) %>%
+        filter(daysuntilelection >= -7) %>%
         ggplot(aes(x = daysuntilelection, y = fit)) +
         geom_line(linetype = "dashed", color = "gray50", alpha = .5) +
         scale_x_reverse(
@@ -216,7 +203,7 @@ generate_year_plot <- function(year_mods, all_votes = votes, filter_year = year(
         geom_errorbar(
             data = mod_data %>% filter(daysuntilelection == 0),
             aes(ymin = lwr, ymax = upr), width = 1, linewidth = 0.5, color = "gray50"
-        ) + 
+        ) +
         geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
         geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
         labs(
@@ -226,7 +213,7 @@ generate_year_plot <- function(year_mods, all_votes = votes, filter_year = year(
                 "At this voting rate, we'll meet quorum {abs(quorum_date)} days ",
                 "{qual} the original meeting date"
             ),
-            subtitle = glue::glue("Expected votes: {final_vote} {err_range}"),
+            subtitle = glue::glue("Expected votes ({filter_year}): {final_vote} {err_range}"),
             caption = glue::glue("{print_model}<BR/><BR/>{print_params}")
         ) +
         theme(
@@ -249,4 +236,4 @@ generate_year_plot <- function(year_mods, all_votes = votes, filter_year = year(
     )
 }
 
-purrr::walk(year_mods$year, \(y) generate_year_plot(year_mods, votes, y))
+purrr::walk(seq_along(year_mods$year), \(k) generate_year_plot(year_mods[k, ], votes))
