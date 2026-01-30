@@ -10,10 +10,11 @@ print_model <- paste0(
     " \U007C<sup>a<sub>2</sub></sup></I>"
 )
 
-model_votes <- function(dat) {
+model_votes <- function(dat, start_param = list(a0 = 23, a1 = 31, a2 = 1),
+                        control_param = list(warnOnly = TRUE, maxiter = 100)) {
     nls(votesreceived ~ a0 * (abs(a1 - daysuntilelection))^(a2),
-        start = list(a0 = 23, a1 = 31, a2 = 0.5),
-        control = list(warnOnly = TRUE, maxiter = 1000),
+        start = start_param,
+        control = control_param,
         data = dat
     )
 }
@@ -29,12 +30,13 @@ extract_params <- function(mod) {
     all_params$estimate %>% set_names(all_params$term)
 }
 
-param_comment <- function(params, rsq) {
+param_comment <- function(params, rsq, n_iter) {
     paste0(
         "a<sub>0</sub> = ", format(round(params["a0"], 2), nsmall = 2), "<BR/>",
         "a<sub>1</sub> = ", format(round(params["a1"], 2), nsmall = 2), "<BR/>",
         "a<sub>2</sub> = ", format(round(params["a2"], 2), nsmall = 2), "<BR/>",
-        "r<sup>2</sup> = ", format(round(rsq, 3), nsmall = 2)
+        "r<sup>2</sup> = ", format(round(rsq, 3), nsmall = 2), "<BR/>",
+        "# of iter. = ", n_iter
     )
 }
 
@@ -59,13 +61,16 @@ year_mods <-
     nest(data = !year) %>%
     mutate(
         mod = map(data, model_votes),
-        converged = map_lgl(mod, \(m) pluck(m, "convInfo", "isConv"))
+        data_points = map_int(data, nrow),
+        converged = map_lgl(mod, \(m) pluck(m, "convInfo", "isConv")),
+        n_iter = map_int(mod, \(m) pluck(m, "convInfo", "finIter")),
+        fin_tol = map_dbl(mod, \(m) pluck(m, "convInfo", "finTol"))
     ) %>%
     filter(converged) %>%
     mutate(
         rsq = map_dbl(mod, calc_rsq),
         params = map(mod, extract_params),
-        param_comment = map2_chr(params, rsq, param_comment),
+        param_comment = pmap_chr(list(params, rsq, n_iter), \(p, r, n) param_comment(p, r, n)),
         pred_votes = map(mod, predict_votes),
         expected_comment = map(pred_votes, day_zero_votes)
     )
@@ -102,7 +107,6 @@ all_years <-
         hjust = 1.1
     ) +
     ggtext::geom_richtext(
-        # data = year_mod_params,
         aes(
             x = 11,
             y = 30,
