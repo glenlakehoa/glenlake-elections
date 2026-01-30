@@ -1,6 +1,7 @@
 library(tidyverse)
 
 theme_set(theme_light())
+source("defaults.r")
 load("Rdata/votes.Rdata")
 
 
@@ -73,11 +74,20 @@ year_mods <-
         param_comment = pmap_chr(list(params, rsq, n_iter), \(p, r, n) param_comment(p, r, n)),
         pred_votes = map(mod, predict_votes),
         expected_comment = map(pred_votes, day_zero_votes)
+    ) %>%
+    mutate(
+        a1 = map_dbl(params, \(p) floor(p["a1"])),
+        pred_votes_adj = map2(pred_votes, a1, \(d, a1) d %>% filter(daysuntilelection <= a1)),
     )
+
+year_mods %>%
+    mutate(
+        a1 = map_dbl(params, \(p) p["a1"]),
+    ) %>% select(year, a1) 
 
 all_years <-
     year_mods %>%
-    unnest(pred_votes) %>%
+    unnest(pred_votes_adj) %>%
     filter(daysuntilelection >= -7) %>%
     ggplot(aes(x = daysuntilelection, y = fit, group = year)) +
     coord_cartesian(clip = "off") +
@@ -160,7 +170,7 @@ ggsave("graphs/vote_model_pred.png",
 #
 
 generate_year_plot <- function(year_mod, all_votes = votes) {
-    mod_data <- year_mod$pred_votes[[1]]
+    mod_data <- year_mod$pred_votes_adj[[1]]
 
     filter_year <- year_mod$year
 
@@ -243,14 +253,13 @@ generate_year_plot <- function(year_mod, all_votes = votes) {
 purrr::walk(seq_along(year_mods$year), \(k) generate_year_plot(year_mods[k, ], votes))
 
 
-#
+
 #
 # dashboard target zone
 #
 #
 
 LAST_POINTS <- 5
-
 
 linear_vote_model <- function(dat) {
     mod <- lm(votesreceived ~ daysuntilelection, data = dat)
@@ -291,22 +300,18 @@ comp_mod_g <-
     geom_errorbar(
         aes(ymin = linlwr, ymax = linupr),
         width = 4,
-        # color = "gray50",
         show.legend = FALSE
     ) +
     geom_errorbarh(
         aes(xmin = lwr, xmax = upr),
         height = 4,
-        # color = "gray50",
         show.legend = FALSE
     ) +
     geom_label(aes(label = year), show.legend = FALSE) +
     scale_x_continuous(
-        # limits = c(80, 180),
         breaks = seq(0, 480, 20)
     ) +
     scale_y_continuous(
-        # limits = c(80, 180),
         breaks = seq(0, 480, 20)
     ) +
     geom_polygon(
