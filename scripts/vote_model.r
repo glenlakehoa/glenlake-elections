@@ -241,3 +241,102 @@ generate_year_plot <- function(year_mod, all_votes = votes) {
 }
 
 purrr::walk(seq_along(year_mods$year), \(k) generate_year_plot(year_mods[k, ], votes))
+
+
+#
+#
+# dashboard target zone
+#
+#
+
+LAST_POINTS <- 5
+
+
+linear_vote_model <- function(dat) {
+    mod <- lm(votesreceived ~ daysuntilelection, data = dat)
+    fit <- broom::augment(mod, newdata = tibble(daysuntilelection = 0), interval = "prediction")
+    return(fit)
+}
+
+linvotes <-
+    votes %>%
+    filter(year >= 2020) %>%
+    nest(data = -year) %>%
+    mutate(
+        last_point = map(data, \(d) slice_tail(d, n = LAST_POINTS)),
+        enough_points = map_lgl(last_point, \(d) nrow(d) >= LAST_POINTS),
+        lin_mod = map(last_point, linear_vote_model),
+    ) %>%
+    unnest(lin_mod) %>%
+    filter(enough_points) %>%
+    select(year, linfit = .fitted, linlwr = .lower, linupr = .upper)
+
+both_preds <- year_mods %>%
+    select(year, pred_votes) %>%
+    unnest(pred_votes) %>%
+    filter(daysuntilelection == 0) %>%
+    inner_join(linvotes, by = "year")
+
+
+boundingbox <- tibble(x = c(400, 120, 120, 400), y = c(120, 120, 400, 400))
+
+comp_mod_g <- 
+    both_preds %>%
+    mutate(
+        mxyear = max(year),
+        currentyear = year == mxyear
+    ) %>%
+    ggplot(aes(x = fit, y = linfit, color = currentyear)) +
+    geom_point(shape = 10, size = 4, show.legend = FALSE) +
+    geom_errorbar(
+        aes(ymin = linlwr, ymax = linupr),
+        width = 4,
+        # color = "gray50",
+        show.legend = FALSE
+    ) +
+    geom_errorbarh(
+        aes(xmin = lwr, xmax = upr),
+        height = 4,
+        # color = "gray50",
+        show.legend = FALSE
+    ) +
+    geom_label(aes(label = year), show.legend = FALSE) +
+    scale_x_continuous(
+        # limits = c(80, 180),
+        breaks = seq(0, 480, 20)
+    ) +
+    scale_y_continuous(
+        # limits = c(80, 180),
+        breaks = seq(0, 480, 20)
+    ) +
+    geom_polygon(
+        data = boundingbox,
+        inherit.aes = FALSE,
+        aes(x, y),
+        fill = NA,
+        lty = 2,
+        color = glcolors$green
+    ) +
+    coord_equal(xlim = c(80, 180), ylim = c(80, 180), clip = "off") +
+    labs(
+        x = "Polynomial Decay Model Prediction",
+        y = glue::glue("Linear Model Prediction (last {LAST_POINTS} points)"),
+        title = "Comparison of Vote Prediction Models",
+        caption = "Dashed lines indicate quorum threshold of 120 votes"
+    ) +
+    scale_color_manual(
+        values = c("TRUE" = glcolors$green, "FALSE" = glcolors$tan)
+    ) +
+    theme(
+        plot.title = ggtext::element_textbox_simple(
+            size = 15, 
+            margin = margin(b = 10)
+        ),
+        plot.title.position = "plot",
+        plot.caption.position = "plot",
+        plot.caption = ggtext::element_markdown(hjust = 0)
+    )
+
+ggsave("graphs/vote_model_comparison.png",
+    width = 8, height = 8, plot = comp_mod_g
+)
