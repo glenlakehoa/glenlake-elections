@@ -53,6 +53,13 @@ analysisfiles <-
         full.names = TRUE
     )
 
+modelfiles <-
+    rev(list.files(
+        path = "graphs/year_pred",
+        pattern = ".*\\.png$",
+        full.names = TRUE
+    ))
+
 writeLines(
     make_doc(make_links(analysisfiles)),
     con = "index.html"
@@ -61,4 +68,9 @@ writeLines(
 writeLines(
     make_doc(make_links(yearfiles)),
     con = "prev_years.html"
+)
+
+writeLines(
+    make_doc(make_links(modelfiles)),
+    con = "models.html"
 )
