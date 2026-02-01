@@ -197,9 +197,13 @@ generate_year_plot <- function(year_mod, all_votes = votes) {
 
     print_params <- str_replace_all(year_mod$param_comment, "<BR/>", ", ")
 
-    quorum_date <-
-        approx(mod_data$fit, mod_data$daysuntilelection, xout = 120)$y %>%
-        round(., digits = 1)
+    # quorum_date <-
+    #     approx(mod_data$fit, mod_data$daysuntilelection, xout = 120)$y %>%
+    #     round(., digits = 1)
+
+    quorum_dates <- lapply(find_quorum(mod_data), round, digits = 1)
+
+    quorum_date <- quorum_dates[["fit_quorum"]]
 
     qual <- ifelse(quorum_date > 0, "before", "after")
 
@@ -238,6 +242,10 @@ generate_year_plot <- function(year_mod, all_votes = votes) {
         geom_errorbar(
             data = mod_data %>% filter(daysuntilelection == 0),
             aes(ymin = lwr, ymax = upr), width = 1, linewidth = 0.5, color = "gray50"
+        ) +
+        geom_errorbar(
+            data = as_tibble(quorum_dates),
+            aes(y = 120, x = fit_quorum, xmin = low_quorum, xmax = high_quorum), width = 10, linewidth = 0.5, color = "gray50", inherit.aes = FALSE
         ) +
         geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
         geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
