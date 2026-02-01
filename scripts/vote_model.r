@@ -331,7 +331,7 @@ comp_mod_g <-
         width = 4,
         show.legend = FALSE
     ) +
-    geom_errorbarh(
+    geom_errorbar(
         aes(xmin = lwr, xmax = upr),
         height = 4,
         show.legend = FALSE
