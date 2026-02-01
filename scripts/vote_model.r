@@ -56,6 +56,13 @@ day_zero_votes <- function(dat) {
         mutate(expected_comment = glue::glue("Expected votes: {round(fit, 0)}"))
 }
 
+find_quorum <- function(dat, quorum = 120) {
+    params <- c("lwr", "fit", "upr")
+    days <- lapply(params, \(p) approx(dat[[p]], dat[["daysuntilelection"]], xout = quorum)$y)
+    names(days) <- c("low_quorum", "fit_quorum", "high_quorum")
+    days
+}
+
 
 year_mods <-
     votes %>%
@@ -78,12 +85,14 @@ year_mods <-
     mutate(
         a1 = map_dbl(params, \(p) floor(p["a1"])),
         pred_votes_adj = map2(pred_votes, a1, \(d, a1) d %>% filter(daysuntilelection <= a1)),
+        quorum_range = map(pred_votes_adj, find_quorum)
     )
 
 year_mods %>%
     mutate(
         a1 = map_dbl(params, \(p) p["a1"]),
-    ) %>% select(year, a1) 
+    ) %>%
+    select(year, a1)
 
 all_years <-
     year_mods %>%
@@ -137,6 +146,18 @@ all_years <-
             ymax = upr
         ),
         width = 2,
+        linewidth = 0.5,
+        color = "gray50"
+    ) +
+    geom_errorbar(
+        data = year_mods %>% unnest_wider(quorum_range),
+        aes(
+            y = 120,
+            x = fit_quorum,
+            xmin = high_quorum,
+            xmax = low_quorum
+        ),
+        width = 10,
         linewidth = 0.5,
         color = "gray50"
     ) +
@@ -289,7 +310,7 @@ both_preds <- year_mods %>%
 
 boundingbox <- tibble(x = c(400, 120, 120, 400), y = c(120, 120, 400, 400))
 
-comp_mod_g <- 
+comp_mod_g <-
     both_preds %>%
     mutate(
         mxyear = max(year),
@@ -334,7 +355,7 @@ comp_mod_g <-
     ) +
     theme(
         plot.title = ggtext::element_textbox_simple(
-            size = 15, 
+            size = 15,
             margin = margin(b = 10)
         ),
         plot.title.position = "plot",
