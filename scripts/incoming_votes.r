@@ -39,6 +39,9 @@ votecount_g <-
     ) +
     geom_col(show.legend = FALSE) +
     geom_text(aes(y = votesreceived + 3, label = votesreceived)) +
+    scale_x_continuous(
+        breaks = scales::pretty_breaks()
+    ) +
     scale_fill_manual(
         values = colors
     ) +
