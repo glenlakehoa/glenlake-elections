@@ -31,6 +31,12 @@ extract_params <- function(mod) {
     all_params$estimate %>% set_names(all_params$term)
 }
 
+extract_model_plumbing <- function(mod, plumb = c("isConv", "finIter", "finTol"), names = c("converged", "n_iter", "fin_tol")) {
+    plumb_values <- lapply(plumb, \(p) pluck(mod, "convInfo", p))
+    names(plumb_values) <- names
+    plumb_values
+}
+
 param_comment <- function(params, rsq, n_iter) {
     paste0(
         "a<sub>0</sub> = ", format(round(params["a0"], 2), nsmall = 2), "<BR/>",
@@ -70,10 +76,9 @@ year_mods <-
     mutate(
         mod = map(data, model_votes),
         data_points = map_int(data, nrow),
-        converged = map_lgl(mod, \(m) pluck(m, "convInfo", "isConv")),
-        n_iter = map_int(mod, \(m) pluck(m, "convInfo", "finIter")),
-        fin_tol = map_dbl(mod, \(m) pluck(m, "convInfo", "finTol"))
+        plumbing = map(mod, extract_model_plumbing)
     ) %>%
+    unnest_wider(plumbing) %>%
     filter(converged) %>%
     mutate(
         rsq = map_dbl(mod, calc_rsq),
