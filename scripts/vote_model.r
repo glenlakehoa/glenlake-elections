@@ -73,12 +73,15 @@ find_quorum <- function(dat, quorum = 120) {
 year_mods <-
     votes %>%
     nest(data = !year) %>%
+    mutate(data_points = map_int(data, nrow)) %>%
+    # filter on number of data points being greater than number of parameters (3)
+    filter(data_points > 3) %>%
     mutate(
         mod = map(data, model_votes),
-        data_points = map_int(data, nrow),
         plumbing = map(mod, extract_model_plumbing)
     ) %>%
     unnest_wider(plumbing) %>%
+    # filter on models that converged
     filter(converged) %>%
     mutate(
         rsq = map_dbl(mod, calc_rsq),
@@ -92,12 +95,6 @@ year_mods <-
         pred_votes_adj = map2(pred_votes, a1, \(d, a1) d %>% filter(daysuntilelection <= a1)),
         quorum_range = map(pred_votes_adj, find_quorum)
     )
-
-year_mods %>%
-    mutate(
-        a1 = map_dbl(params, \(p) p["a1"]),
-    ) %>%
-    select(year, a1)
 
 all_years <-
     year_mods %>%
@@ -202,10 +199,6 @@ generate_year_plot <- function(year_mod, all_votes = votes) {
 
     print_params <- str_replace_all(year_mod$param_comment, "<BR/>", ", ")
 
-    # quorum_date <-
-    #     approx(mod_data$fit, mod_data$daysuntilelection, xout = 120)$y %>%
-    #     round(., digits = 1)
-
     quorum_dates <- lapply(find_quorum(mod_data), round, digits = 1)
 
     quorum_date <- quorum_dates[["fit_quorum"]]
@@ -250,7 +243,8 @@ generate_year_plot <- function(year_mod, all_votes = votes) {
         ) +
         geom_errorbar(
             data = as_tibble(quorum_dates),
-            aes(y = 120, x = fit_quorum, xmin = low_quorum, xmax = high_quorum), width = 10, linewidth = 0.5, color = "gray50", inherit.aes = FALSE
+            aes(y = 120, x = fit_quorum, xmin = low_quorum, xmax = high_quorum),
+            width = 10, linewidth = 0.5, color = "gray50", inherit.aes = FALSE
         ) +
         geom_hline(yintercept = 120, linewidth = 2, alpha = .1) +
         geom_vline(xintercept = 0, linewidth = 2, alpha = .1) +
@@ -293,52 +287,44 @@ purrr::walk(seq_along(year_mods$year), \(k) generate_year_plot(year_mods[k, ], v
 #
 #
 
-LAST_POINTS <- 5
+boundingbox <- tibble(x = c(400, 120, 120, 400), y = c(0, 0, 40, 40))
 
-linear_vote_model <- function(dat) {
-    mod <- lm(votesreceived ~ daysuntilelection, data = dat)
-    fit <- broom::augment(mod, newdata = tibble(daysuntilelection = 0), interval = "prediction")
-    return(fit)
-}
-
-linvotes <-
-    votes %>%
-    filter(year >= 2020) %>%
-    nest(data = -year) %>%
-    mutate(
-        last_point = map(data, \(d) slice_tail(d, n = LAST_POINTS)),
-        enough_points = map_lgl(last_point, \(d) nrow(d) >= LAST_POINTS),
-        lin_mod = map(last_point, linear_vote_model),
-    ) %>%
-    unnest(lin_mod) %>%
-    filter(enough_points) %>%
-    select(year, linfit = .fitted, linlwr = .lower, linupr = .upper)
-
-both_preds <- year_mods %>%
-    select(year, pred_votes) %>%
-    unnest(pred_votes) %>%
+box_data <- year_mods %>%
+    unnest(pred_votes_adj) %>%
     filter(daysuntilelection == 0) %>%
-    inner_join(linvotes, by = "year")
-
-
-boundingbox <- tibble(x = c(400, 120, 120, 400), y = c(120, 120, 400, 400))
+    unnest_wider(quorum_range) %>%
+    select(year, expected_votes = fit, lwr, upr, low_quorum, fit_quorum, high_quorum) %>%
+    # select columns lwr, upr and set those to NA where year != 2026
+    mutate(across(
+        c(lwr, upr, low_quorum, high_quorum),
+        ~ ifelse(year != max(year), NA, .)
+    ))
 
 comp_mod_g <-
-    both_preds %>%
+    box_data %>%
     mutate(
         mxyear = max(year),
-        currentyear = year == mxyear
+        currentyear = year == mxyear,
     ) %>%
-    ggplot(aes(x = fit, y = linfit, color = currentyear)) +
+    ggplot(aes(x = expected_votes, y = fit_quorum, color = currentyear)) +
+    geom_polygon(
+        data = boundingbox,
+        inherit.aes = FALSE,
+        aes(x, y),
+        fill = alpha(glcolors$green, 0.05),
+        lty = 1,
+        linewidth = 2,
+        color = alpha(glcolors$green, 0.2)
+    ) +
     geom_point(shape = 10, size = 4, show.legend = FALSE) +
     geom_errorbar(
-        aes(ymin = linlwr, ymax = linupr),
-        width = 4,
+        aes(ymin = low_quorum, ymax = high_quorum),
+        width = 2,
         show.legend = FALSE
     ) +
     geom_errorbar(
         aes(xmin = lwr, xmax = upr),
-        height = 4,
+        width = 1,
         show.legend = FALSE
     ) +
     geom_label(aes(label = year), show.legend = FALSE) +
@@ -346,20 +332,14 @@ comp_mod_g <-
         breaks = seq(0, 480, 20)
     ) +
     scale_y_continuous(
-        breaks = seq(0, 480, 20)
+        breaks = seq(-20, 20, 2)
     ) +
-    geom_polygon(
-        data = boundingbox,
-        inherit.aes = FALSE,
-        aes(x, y),
-        fill = NA,
-        lty = 2,
-        color = glcolors$green
+    coord_cartesian(
+        xlim = c(80, 180), ylim = c(-5, 20),
     ) +
-    coord_equal(xlim = c(80, 180), ylim = c(80, 180), clip = "off") +
     labs(
         x = "Polynomial Decay Model Prediction",
-        y = glue::glue("Linear Model Prediction (last {LAST_POINTS} points)"),
+        y = "Expected Quorum Date (days until election)",
         title = "Comparison of Vote Prediction Models",
         caption = "Dashed lines indicate quorum threshold of 120 votes"
     ) +
@@ -377,5 +357,5 @@ comp_mod_g <-
     )
 
 ggsave("graphs/vote_model_comparison.png",
-    width = 8, height = 8, plot = comp_mod_g
+    width = 8, height = 6, plot = comp_mod_g
 )
