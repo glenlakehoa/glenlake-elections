@@ -20,8 +20,8 @@
     "board":
     [
         { "name": "Eric Rice", "tenure_start": "2025-02-08", "tenure_end": null},
-        { "name": "Diana Banks", "tenure_start": "2025-02-08", "tenure_end": null},
-        { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": null}
+        { "name": "Diana Banks", "tenure_start": "2025-02-08", "tenure_end": "2026-02-06"},
+        { "name": "Keosha Haney", "tenure_start": "2025-02-08", "tenure_end": "2026-02-06"}
     ],
     "comment" : "",
     "results": 
